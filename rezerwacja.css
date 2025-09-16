@@ -1,0 +1,14 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+header{
+    width: 100vw;
+    height: 13vh;
+    text-align: center;
+    background-color: forestgreen;
+    padding-top: 50px;
+    color: cyan;
+    text-shadow: 2px 2px 5px darkcyan;
+}
