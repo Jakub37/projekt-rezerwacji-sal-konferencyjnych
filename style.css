@@ -1,4 +1,4 @@
-/* tło całej strony */
+
 * {
     margin: 0px;
     padding: 0px;
@@ -8,13 +8,13 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;   /* wyśrodkowanie bloku logowania */
+    justify-content: center;   
     align-items: center;
     font-family: Arial, sans-serif;
 }
 
 
-/* blok logowania */
+
 #blok_logowania {
     background-color: white;
     padding: 30px;
@@ -24,13 +24,13 @@
     box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
 }
 
-/* nagłówek */
+
 #blok_logowania h2 {
     margin-bottom: 20px;
     color: #333;
 }
 
-/* pola tekstowe */
+
 #blok_logowania input {
     width: 80%;
     padding: 12px;
@@ -42,13 +42,13 @@
     font-size: 14px;
 }
 
-/* efekt po kliknięciu w input */
+
 #blok_logowania input:focus {
     border-color: #2575fc;
     box-shadow: 0 0 5px rgba(37,117,252,0.5);
 }
 
-/* przycisk */
+
 #przycisk {
     width: 85%;
     padding: 12px;
@@ -71,8 +71,8 @@
     font-size: 70px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 40px;  /* odstęp od bloku logowania */
+    margin-bottom: 40px; 
     position: relative;
-    top: -30px;            /* przesuwa napis trochę w górę */
+    top: -30px;           
 }
 

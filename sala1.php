@@ -12,7 +12,6 @@
         <a id="wroc" href="wybor_sali.html">← Wróć</a>
         <a id="sala2" href="sala2.html">Sala konferencyjna 2 →</a>
         <h1>Sala Konferencyjna 1</h1>
-        <!-- Tu będzie zawartość sali -->
     </div>
 </div>
 </body>
