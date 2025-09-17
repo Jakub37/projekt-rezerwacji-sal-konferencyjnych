@@ -1,0 +1,78 @@
+/* tło całej strony */
+* {
+    margin: 0px;
+    padding: 0px;
+}
+#glowny {
+    background: linear-gradient(180deg, #970cc1, #2575fc);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   /* wyśrodkowanie bloku logowania */
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+
+/* blok logowania */
+#blok_logowania {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+}
+
+/* nagłówek */
+#blok_logowania h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* pola tekstowe */
+#blok_logowania input {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+/* efekt po kliknięciu w input */
+#blok_logowania input:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 5px rgba(37,117,252,0.5);
+}
+
+/* przycisk */
+#przycisk {
+    width: 85%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#przycisk:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+}
+#naglowek {
+    font-family: 'Courier New', Courier, monospace;
+    color: white;
+    font-size: 70px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 40px;  /* odstęp od bloku logowania */
+    position: relative;
+    top: -30px;            /* przesuwa napis trochę w górę */
+}
+
