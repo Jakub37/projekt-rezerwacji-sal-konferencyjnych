@@ -20,15 +20,6 @@
     padding: 20px; /* odsunięcie od krawędzi */
 }
 
-/* Główny blok sali */
-#blok_sali {
-    background-color: white;
-    width: 90%;       /* prawie cała szerokość ekranu */
-    min-height: 80vh; /* prawie cała wysokość ekranu */
-
-    padding: 20px; 
-}
-
 
 #blok_sali {
     background-color: white;
@@ -130,19 +121,6 @@
     background-color: rgba(0,0,0,0.2);
 }
 
-#wroc {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    text-decoration: none;
-    color: #333;
-    background-color: rgba(0,0,0,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
 #wroc:hover {
     background-color: rgba(0,0,0,0.2);
 
@@ -164,4 +142,57 @@
 #sala2:hover {
     background-color: rgba(0,0,0,0.2);
 }
+
+#rezerwacje {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 700px;
+
+    /* przesunięcie w lewo: */
+    margin-left: 0;
+    margin-right: auto;
+}
+
+#tabela-rezerwacji {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#tabela-rezerwacji th, #tabela-rezerwacji td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+#tabela-rezerwacji thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#tabela-rezerwacji tbody tr:hover {
+    background-color: #f1f1f1;
+}
+#xd {
+    text-align: center;
+}
+#wiecej-przycisk {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #4CAF50; /* zielony */
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+#wiecej-przycisk:hover {
+    background-color: #45a049;
+}
+
 
