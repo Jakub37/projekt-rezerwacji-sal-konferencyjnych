@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* Główne tło strony */
+
+
+
+#glowny {
+    background: linear-gradient(180deg, #970cc1, #2575fc);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+
+    padding: 20px; /* odsunięcie od krawędzi */
+}
+
+/* Główny blok sali */
+#blok_sali {
+    background-color: white;
+    width: 90%;       /* prawie cała szerokość ekranu */
+    min-height: 80vh; /* prawie cała wysokość ekranu */
+
+    padding: 20px; 
+}
+
+
+#blok_sali {
+    background-color: white;
+    width: 90%;     
+    min-height: 80vh; 
+
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Nagłówek sali */
+
+
+#blok_sali h1 {
+    color: #333;
+    font-size: 40px;
+    margin-bottom: 20px;
+}
+
+
+/* Przycisk "Wróć" w lewym górnym rogu */
+/* Przycisk użytkownika */
+#uzytkownik {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 5px 8px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+#uzytkownik img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#uzytkownik .tekst {
+    display: flex;
+    flex-direction: column; /* napis + imię pod spodem */
+    font-size: 12px;
+    color: #333;
+    line-height: 1.2;
+}
+
+#uzytkownik:hover {
+    background-color: rgba(0,0,0,0.1);
+}
+
+
+/* Modal */
+#modal {
+    display: none; /* ukryty domyślnie */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+/* Wnętrze modala */
+#modal-content {
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    padding: 40px;
+    min-width: 300px;
+    min-height: 200px;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+}
+
+#wroc {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    color: #333;
+    background-color: rgba(0,0,0,0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#wroc:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+#wroc {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    color: #333;
+    background-color: rgba(0,0,0,0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#wroc:hover {
+    background-color: rgba(0,0,0,0.2);
+
+}
+
+#sala2 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    text-decoration: none;
+    color: #333;
+    background-color: rgba(0,0,0,0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#sala2:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+#rezerwacje {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 700px;
+
+    /* przesunięcie w lewo: */
+    margin-left: 0;
+    margin-right: auto;
+}
+
+#tabela-rezerwacji {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#tabela-rezerwacji th, #tabela-rezerwacji td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+#tabela-rezerwacji thead {
+    background-color: #4CAF50;
+    color: white;
+}
+
+#tabela-rezerwacji tbody tr:hover {
+    background-color: #f1f1f1;
+}
+#xd {
+    text-align: center;
+}
+#rezerwacje {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 700px;
+    margin-left: 0;   /* wyrównanie do lewej */
+    text-align: left; /* wszystkie elementy w tym divie wyrównane do lewej */
+}
+
+#wiecej-przycisk {
+    display: inline-block;   /* dopasowana szerokość do tekstu */
+    padding: 10px 20px;
+    background-color: #4CAF50; 
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+    text-align: center;
+}
+
+#wiecej-przycisk:hover {
+    background-color: #45a049;
+}
+
+
+

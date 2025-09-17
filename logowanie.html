@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Logowanie</title>
+</head>
+<body>
+    <div id="glowny">
+        <h1 id="naglowek">LOGOWANIE</h1>
+        <div id="blok_logowania">
+            <h2>Dane użytkownika</h2>
+            <input type="text" placeholder="Imię..." id="dane_imie"><br>
+            <input type="text" placeholder="Nazwisko..." id="dane_nazwisko"><br>
+            <button id="przycisk">Zaloguj</button>
+            <p id="komunikat" style="color:red; font-weight:bold; display:none; margin-top:10px;"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("przycisk").addEventListener("click", function() {
+            const imie = document.getElementById("dane_imie").value.trim();
+            const nazwisko = document.getElementById("dane_nazwisko").value.trim();
+            const komunikat = document.getElementById("komunikat");
+
+            if (imie === "" || nazwisko === "") {
+                // jeśli którekolwiek pole jest puste
+                komunikat.textContent = "Wypełnij dane!";
+                komunikat.style.display = "block";
+            } else {
+                // zapis do localStorage
+                localStorage.setItem("uzytkownikImie", imie);
+                localStorage.setItem("uzytkownikNazwisko", nazwisko);
+
+                // przejście dalej
+                window.location.href = "wybor_sali.html";
+            }
+        });
+    </script>
+</body>
+</html>

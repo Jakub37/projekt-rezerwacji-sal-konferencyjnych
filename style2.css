@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#glowny {
+    background: linear-gradient(180deg, #970cc1, #2575fc);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;   /* blok wyboru wycentrowany */
+    justify-content: center;   
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+#blok_wyboru {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+
+    width: 350px;              /* tak samo jak w logowaniu */
+    text-align: center;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    min-height: 280px;         /* żeby wizualnie pasował wysokością */
+
+    width: 350px;              
+    text-align: center;
+    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    min-height: 280px;         
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#blok_wyboru h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+
+
+
+.przycisk1 {
+    width: 85%;
+    padding: 12px;
+    margin: 10px auto;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(200deg, #6a11cb, #2575fc);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.przycisk2 {
+    width: 85%;
+    padding: 12px;
+    margin: 10px auto;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(200deg, #6a11cb, #2575fc);
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.przycisk1:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+}
+.przycisk2:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+}
+#naglowek {
+    color: white;
+    font-size: 70px;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+
+    margin-bottom: 40px;       /* odstęp od bloku wyboru sali */
+    position: relative;
+    top: -20px;                 /* przesunięcie nagłówka lekko w górę */
+
+    margin-bottom: 40px;       
+    position: relative;
+    top: -20px;                 
+
+}
