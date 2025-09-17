@@ -225,12 +225,16 @@ if($imie && $nazwisko){
                     <span id="imieNazwisko"></span>
                 </div>
             </div>
+
             <a id="sala2" href="sala2.php">Sala konferencyjna 2 →</a>
             <script>
                         document.getElementById("przycisk").addEventListener("click"), function() {
                             window.location.href = "wybor_sali.html";
                         }
                     </script>
+
+            <a id="sala2" href="sala2.html">Sala konferencyjna 2 →</a>
+
         </div>
 
         <!-- Napis sala -->
