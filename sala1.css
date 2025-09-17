@@ -20,6 +20,15 @@
     padding: 20px; /* odsunięcie od krawędzi */
 }
 
+/* Główny blok sali */
+#blok_sali {
+    background-color: white;
+    width: 90%;       /* prawie cała szerokość ekranu */
+    min-height: 80vh; /* prawie cała wysokość ekranu */
+
+    padding: 20px; 
+}
+
 
 #blok_sali {
     background-color: white;
@@ -121,6 +130,19 @@
     background-color: rgba(0,0,0,0.2);
 }
 
+#wroc {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-decoration: none;
+    color: #333;
+    background-color: rgba(0,0,0,0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
 #wroc:hover {
     background-color: rgba(0,0,0,0.2);
 
@@ -179,20 +201,29 @@
 #xd {
     text-align: center;
 }
+#rezerwacje {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 700px;
+    margin-left: 0;   /* wyrównanie do lewej */
+    text-align: left; /* wszystkie elementy w tym divie wyrównane do lewej */
+}
+
 #wiecej-przycisk {
-    display: inline-block;
-    margin-top: 15px;
+    display: inline-block;   /* dopasowana szerokość do tekstu */
     padding: 10px 20px;
-    background-color: #4CAF50; /* zielony */
+    background-color: #4CAF50; 
     color: white;
     text-decoration: none;
     font-weight: bold;
     border-radius: 8px;
     transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 #wiecej-przycisk:hover {
     background-color: #45a049;
 }
+
 
 

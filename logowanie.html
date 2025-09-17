@@ -10,7 +10,7 @@
     <div id="glowny">
         <h1 id="naglowek">LOGOWANIE</h1>
         <div id="blok_logowania">
-            <h2>Wypełnij dane</h2>
+            <h2>Dane użytkownika</h2>
             <input type="text" placeholder="Imię..." id="dane_imie"><br>
             <input type="text" placeholder="Nazwisko..." id="dane_nazwisko"><br>
             <button id="przycisk">Zaloguj</button>
@@ -25,10 +25,11 @@
             const komunikat = document.getElementById("komunikat");
 
             if (imie === "" || nazwisko === "") {
+                // jeśli którekolwiek pole jest puste
                 komunikat.textContent = "Wypełnij dane!";
                 komunikat.style.display = "block";
             } else {
-                // zapisz do localStorage
+                // zapis do localStorage
                 localStorage.setItem("uzytkownikImie", imie);
                 localStorage.setItem("uzytkownikNazwisko", nazwisko);
 
@@ -38,31 +39,4 @@
         });
     </script>
 </body>
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="style.css">
-        <title>Logowanie</title>
-    </head>
-    <body>
-        <div id="glowny">
-            <h1 id="naglowek">LOGOWANIE</h1>
-            <div id="blok_logowania">
-                <h2>Wypełnij dane</h2>
-                <input type="text" placeholder="Imię..." id="dane_imie"><br>
-                <input type="text" placeholder="Nazwisko..."
-                    id="dane_nazwisko"><br>
-                <button id="przycisk" href="wybor_sali.html">Zaloguj</button>
-            </div>
-        </div>
-
-        <script>
-    document.getElementById("przycisk").addEventListener("click", function() {
-        window.location.href = "wybor_sali.html";
-    });
-</script>
-
-    </body>
-
 </html>
