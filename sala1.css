@@ -1,229 +1,197 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        #glowny {
+            background: linear-gradient(180deg, #970cc1, #2575fc);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
 
-/* Główne tło strony */
+        #blok_sali {
+            background-color: white;
+            width: 90%;
+            min-height: 80vh;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
 
+        /* 🔄 ZMIENIONE */
+        #top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 75px;
+            gap: 20px;
+        }
 
+        #uzytkownik {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
 
-#glowny {
-    background: linear-gradient(180deg, #970cc1, #2575fc);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
+        #uzytkownik img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-    padding: 20px; /* odsunięcie od krawędzi */
-}
+        #uzytkownik .tekst {
+            display: flex;
+            flex-direction: column;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.2;
+        }
 
-/* Główny blok sali */
-#blok_sali {
-    background-color: white;
-    width: 90%;       /* prawie cała szerokość ekranu */
-    min-height: 80vh; /* prawie cała wysokość ekranu */
+        #uzytkownik:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
 
-    padding: 20px; 
-}
+        #sala2 {
+            text-decoration: none;
+            color: #333;
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
 
+        #sala2:hover {
+            background-color: rgba(0,0,0,0.2);
+        }
 
-#blok_sali {
-    background-color: white;
-    width: 90%;     
-    min-height: 80vh; 
+        /* 🔄 PRZENIESIONE I ZAKTUALIZOWANE */
+        #naglowek-sala {
+            flex: 1;
+            text-align: center;
+        }
 
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+        #main-content {
+            display: flex;
+            gap: 30px;
+            justify-content: space-between;
+        }
 
+        #lewa-strona {
+            flex: 1;
+        }
 
-/* Nagłówek sali */
+        #rezerwacje {
+            width: 100%;
+        }
 
+        #xd {
+            text-align: center;
+            margin-bottom: 15px;
+        }
 
-#blok_sali h1 {
-    color: #333;
-    font-size: 40px;
-    margin-bottom: 20px;
-}
+        #tabela-rezerwacji {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
+        #tabela-rezerwacji th, #tabela-rezerwacji td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            font-size: 14px;
+        }
 
-/* Przycisk "Wróć" w lewym górnym rogu */
-/* Przycisk użytkownika */
-#uzytkownik {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    cursor: pointer;
-    padding: 5px 8px;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-}
+        #tabela-rezerwacji thead {
+            background-color: #4CAF50;
+            color: white;
+        }
 
-#uzytkownik img {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
-}
+        #tabela-rezerwacji tbody tr:hover {
+            background-color: #f1f1f1;
+        }
 
-#uzytkownik .tekst {
-    display: flex;
-    flex-direction: column; /* napis + imię pod spodem */
-    font-size: 12px;
-    color: #333;
-    line-height: 1.2;
-}
+        #prawa-strona {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+            background-color: rgba(255,255,255,0.95);
+        }
 
-#uzytkownik:hover {
-    background-color: rgba(0,0,0,0.1);
-}
+        #prawa-strona h2 {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
 
+        #prawa-strona input {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
 
-/* Modal */
-#modal {
-    display: none; /* ukryty domyślnie */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255,255,255,0.7);
-    justify-content: center;
-    align-items: center;
-}
+        #prawa-strona button {
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            margin-top: 10px;
+        }
 
-/* Wnętrze modala */
-#modal-content {
-    background: rgba(255,255,255,0.95);
-    border-radius: 12px;
-    padding: 40px;
-    min-width: 300px;
-    min-height: 200px;
-    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
-}
+        #prawa-strona button:hover {
+            background-color: #45a049;
+        }
 
-#wroc {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    text-decoration: none;
-    color: #333;
-    background-color: rgba(0,0,0,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
+        #haslo-komunikat {
+            color: red;
+            font-weight: bold;
+            margin-top: 5px;
+            display: none;
+        }
 
-#wroc:hover {
-    background-color: rgba(0,0,0,0.2);
-}
+        #modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
 
-#wroc {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    text-decoration: none;
-    color: #333;
-    background-color: rgba(0,0,0,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-#wroc:hover {
-    background-color: rgba(0,0,0,0.2);
-
-}
-
-#sala2 {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    text-decoration: none;
-    color: #333;
-    background-color: rgba(0,0,0,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-#sala2:hover {
-    background-color: rgba(0,0,0,0.2);
-}
-
-#rezerwacje {
-    margin-top: 30px;
-    width: 100%;
-    max-width: 700px;
-
-    /* przesunięcie w lewo: */
-    margin-left: 0;
-    margin-right: auto;
-}
-
-#tabela-rezerwacji {
-    width: 100%;
-    border-collapse: collapse;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-#tabela-rezerwacji th, #tabela-rezerwacji td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
-    text-align: center;
-    font-size: 14px;
-}
-
-#tabela-rezerwacji thead {
-    background-color: #4CAF50;
-    color: white;
-}
-
-#tabela-rezerwacji tbody tr:hover {
-    background-color: #f1f1f1;
-}
-#xd {
-    text-align: center;
-}
-#rezerwacje {
-    margin-top: 30px;
-    width: 100%;
-    max-width: 700px;
-    margin-left: 0;   /* wyrównanie do lewej */
-    text-align: left; /* wszystkie elementy w tym divie wyrównane do lewej */
-}
-
-#wiecej-przycisk {
-    display: inline-block;   /* dopasowana szerokość do tekstu */
-    padding: 10px 20px;
-    background-color: #4CAF50; 
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-    text-align: center;
-}
-
-#wiecej-przycisk:hover {
-    background-color: #45a049;
-}
-
-
-
+        #modal-content {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 40px;
+            min-width: 300px;
+            min-height: 200px;
+            box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+        }

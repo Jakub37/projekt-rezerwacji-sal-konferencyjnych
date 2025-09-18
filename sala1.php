@@ -7,39 +7,11 @@
     <link rel="stylesheet" href="sala1.css">
 </head>
 
-<?php
-// Połączenie z bazą
-$host = "localhost";
-$user = "root";
-$password = "";
-$dbname = "modernforms_system";
-
-$conn = new mysqli($host, $user, $password, $dbname);
-if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
-
-// Pobranie rezerwacji
-$sql = "SELECT id,Miejsca, Data, Godzina, Status, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina LIMIT 5";
-$result = $conn->query($sql);
-
-// Pobranie hasła aktualnego użytkownika
-$imie = isset($_GET['imie']) ? $_GET['imie'] : '';
-$nazwisko = isset($_GET['nazwisko']) ? $_GET['nazwisko'] : '';
-$haslo = '';
-if($imie && $nazwisko){
-    $stmt = $conn->prepare("SELECT haslo FROM uzytkownicy WHERE imie=? AND nazwisko=?");
-    $stmt->bind_param("ss", $imie, $nazwisko);
-    $stmt->execute();
-    $stmt->bind_result($haslo);
-    $stmt->fetch();
-    $stmt->close();
-}
-?>
-
 <body>
 <div id="glowny">
     <div id="blok_sali">
 
-        <!-- Top controls: użytkownik + link sala2 -->
+        <!-- 🔄 ZMIENIONA STRUKTURA -->
         <div id="top-controls">
             <div id="uzytkownik">
                 <img src="uzytkownik.jpg" alt="Użytkownik">
@@ -48,25 +20,18 @@ if($imie && $nazwisko){
                     <span id="imieNazwisko"></span>
                 </div>
             </div>
-            <script>
-                        document.getElementById("przycisk").addEventListener("click"), function() {
-                            window.location.href = "wybor_sali.html";
-                        }
-                    </script>
+
+            <!-- 🔄 TU TERAZ ZNAJDUJE SIĘ NAGŁÓWEK -->
+            <div id="naglowek-sala"><h2>Sala Konferencyjna 1</h2></div>
 
             <a id="sala2" href="sala2.php">Sala konferencyjna 2 →</a>
-
         </div>
 
-        <!-- Napis sala -->
-        <div id="naglowek-sala"><b>Sala Konferencyjna 1</b></div>
-
-        <!-- Główna sekcja: tabela + formularz -->
         <div id="main-content">
             <div id="lewa-strona">
                 <div id="rezerwacje">
                     <div id="xd">
-                        <h2>Najbliższe rezerwacje</h2>
+                        <h2>Zarezerwowane terminy</h2>
                     </div>
                     <table id="tabela-rezerwacji">
                         <thead>
@@ -81,6 +46,18 @@ if($imie && $nazwisko){
                         </thead>
                         <tbody>
                         <?php
+                        // Połączenie z bazą
+                        $host = "localhost";
+                        $user = "root";
+                        $password = "";
+                        $dbname = "modernforms_system";
+
+                        $conn = new mysqli($host, $user, $password, $dbname);
+                        if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
+
+                        $sql = "SELECT id,Miejsca, Data, Godzina, Status, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina LIMIT 5";
+                        $result = $conn->query($sql);
+
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
@@ -98,18 +75,15 @@ if($imie && $nazwisko){
                         ?>
                         </tbody>
                     </table>
-
-                    <!-- Przycisk pod tabelą -->
-                    <a href="rezerwacje.php" id="wiecej-przycisk">Więcej terminów</a>
                 </div>
             </div>
 
             <div id="prawa-strona">
                 <h2>Rezerwacja</h2>
                 <label>Data</label>
-                <input type="text" id="rezerwacja-data" placeholder="DD-MM-RRRR">
+                <input type="text" id="rezerwacja-data" placeholder="RRRR-MM-DD">
                 <label>Godzina</label>
-                <input type="text" id="rezerwacja-godzina" placeholder="HH:MM">
+                <input type="text" id="rezerwacja-godzina" placeholder="HH:MM-HH:MM">
                 <label>Hasło</label>
                 <input type="password" id="rezerwacja-haslo" placeholder="Wpisz hasło">
                 <div id="haslo-komunikat"></div>
@@ -162,19 +136,30 @@ if($imie && $nazwisko){
     });
 
     // Sprawdzanie hasła
-    const prawdziweHaslo = "<?php echo $haslo; ?>";
     const inputHaslo = document.getElementById("rezerwacja-haslo");
     const komunikatHaslo = document.getElementById("haslo-komunikat");
     const przyciskPodsumowanie = document.getElementById("przycisk-podsumowanie");
 
     przyciskPodsumowanie.addEventListener("click", () => {
-        if(inputHaslo.value === prawdziweHaslo && prawdziweHaslo !== ""){
-            window.location.href = "podsumowanie.html";
-        } else {
+    fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(inputHaslo.value)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                localStorage.setItem("rezerwacjaData", document.getElementById("rezerwacja-data").value);
+                localStorage.setItem("rezerwacjaGodzina", document.getElementById("rezerwacja-godzina").value);
+                localStorage.setItem("rezerwacjaSala", "Sala Konferencyjna 1"); // <<< tutaj
+                window.location.href = "podsumowanie.html";
+            } else {
+                komunikatHaslo.style.display = "block";
+                komunikatHaslo.textContent = data.error || "Błędne hasło";
+            }
+        })
+        .catch(() => {
             komunikatHaslo.style.display = "block";
-            komunikatHaslo.textContent = "Błędne hasło";
-        }
-    });
+            komunikatHaslo.textContent = "Błąd połączenia z serwerem";
+        });
+});
+
 </script>
 
 </body>
