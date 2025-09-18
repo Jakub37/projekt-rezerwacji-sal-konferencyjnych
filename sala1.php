@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala 1</title>
     <link rel="stylesheet" href="sala1.css">
+    
 </head>
 
 <body>
 <div id="glowny">
     <div id="blok_sali">
 
-        <!-- 🔄 ZMIENIONA STRUKTURA -->
         <div id="top-controls">
             <div id="uzytkownik">
                 <img src="uzytkownik.jpg" alt="Użytkownik">
@@ -21,7 +21,6 @@
                 </div>
             </div>
 
-            <!-- 🔄 TU TERAZ ZNAJDUJE SIĘ NAGŁÓWEK -->
             <div id="naglowek-sala"><h2>Sala Konferencyjna 1</h2></div>
 
             <a id="sala2" href="sala2.php">Sala konferencyjna 2 →</a>
@@ -33,48 +32,50 @@
                     <div id="xd">
                         <h2>Zarezerwowane terminy</h2>
                     </div>
-                    <table id="tabela-rezerwacji">
-                        <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Miejsca</th>
-                            <th>Data</th>
-                            <th>Godzina</th>
-                            <th>Status</th>
-                            <th>Rezerwacja</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php
-                        // Połączenie z bazą
-                        $host = "localhost";
-                        $user = "root";
-                        $password = "";
-                        $dbname = "modernforms_system";
+                    <div id="lista-rezerwacji">
+                        <table id="tabela-rezerwacji">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Miejsca</th>
+                                <th>Data</th>
+                                <th>Godzina</th>
+                                <th>Status</th>
+                                <th>Rezerwacja</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            // Połączenie z bazą
+                            $host = "localhost";
+                            $user = "root";
+                            $password = "";
+                            $dbname = "modernforms_system";
 
-                        $conn = new mysqli($host, $user, $password, $dbname);
-                        if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
+                            $conn = new mysqli($host, $user, $password, $dbname);
+                            if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
 
-                        $sql = "SELECT id,Miejsca, Data, Godzina, Status, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina LIMIT 5";
-                        $result = $conn->query($sql);
+                            $sql = "SELECT id,Miejsca, Data, Godzina, Status, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina";
+                            $result = $conn->query($sql);
 
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                echo "<tr>
-                                <td>" . htmlspecialchars($row['id']) . "</td>
-                                <td>" . htmlspecialchars($row['Miejsca']) . "</td>
-                                <td>" . htmlspecialchars($row['Data']) . "</td>
-                                <td>" . htmlspecialchars($row['Godzina']) . "</td>
-                                <td>" . htmlspecialchars($row['Status']) . "</td>
-                                <td>" . htmlspecialchars($row['Rezerwacja']) . "</td>
-                                </tr>";
+                            if ($result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>
+                                    <td>" . htmlspecialchars($row['id']) . "</td>
+                                    <td>" . htmlspecialchars($row['Miejsca']) . "</td>
+                                    <td>" . htmlspecialchars($row['Data']) . "</td>
+                                    <td>" . htmlspecialchars($row['Godzina']) . "</td>
+                                    <td>" . htmlspecialchars($row['Status']) . "</td>
+                                    <td>" . htmlspecialchars($row['Rezerwacja']) . "</td>
+                                    </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='6'>Brak dostępnych rezerwacji</td></tr>";
                             }
-                        } else {
-                            echo "<tr><td colspan='6'>Brak dostępnych rezerwacji</td></tr>";
-                        }
-                        ?>
-                        </tbody>
-                    </table>
+                            ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -93,7 +94,6 @@
     </div>
 </div>
 
-<!-- Modal -->
 <div id="modal">
     <div id="modal-content">
         <h2>Zalogowano jako:</h2>
@@ -141,26 +141,24 @@
     const przyciskPodsumowanie = document.getElementById("przycisk-podsumowanie");
 
     przyciskPodsumowanie.addEventListener("click", () => {
-    fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(inputHaslo.value)}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                localStorage.setItem("rezerwacjaData", document.getElementById("rezerwacja-data").value);
-                localStorage.setItem("rezerwacjaGodzina", document.getElementById("rezerwacja-godzina").value);
-                localStorage.setItem("rezerwacjaSala", "Sala Konferencyjna 1"); // <<< tutaj
-                window.location.href = "podsumowanie.html";
-            } else {
+        fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(inputHaslo.value)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.setItem("rezerwacjaData", document.getElementById("rezerwacja-data").value);
+                    localStorage.setItem("rezerwacjaGodzina", document.getElementById("rezerwacja-godzina").value);
+                    localStorage.setItem("rezerwacjaSala", "Sala Konferencyjna 1");
+                    window.location.href = "podsumowanie.html";
+                } else {
+                    komunikatHaslo.style.display = "block";
+                    komunikatHaslo.textContent = data.error || "Błędne hasło";
+                }
+            })
+            .catch(() => {
                 komunikatHaslo.style.display = "block";
-                komunikatHaslo.textContent = data.error || "Błędne hasło";
-            }
-        })
-        .catch(() => {
-            komunikatHaslo.style.display = "block";
-            komunikatHaslo.textContent = "Błąd połączenia z serwerem";
-        });
-});
-
+                komunikatHaslo.textContent = "Błąd połączenia z serwerem";
+            });
+    });
 </script>
-
 </body>
 </html>

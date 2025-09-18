@@ -1,9 +1,11 @@
+/* Reset */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Główne tło */
 #glowny {
     background: linear-gradient(180deg, #970cc1, #2575fc);
     min-height: 100vh;
@@ -14,6 +16,7 @@
     padding: 20px;
 }
 
+/* Biały blok */
 #blok_sali {
     background-color: white;
     width: 90%;
@@ -24,7 +27,7 @@
     position: relative;
 }
 
-/* TOP BAR */
+/* Górny pasek */
 #top-controls {
     display: flex;
     justify-content: space-between;
@@ -47,7 +50,7 @@
     background-color: rgba(0,0,0,0.2);
 }
 
-/* NAGŁÓWEK SALI */
+/* Nagłówek na środku */
 #naglowek-sala {
     flex: 1;
     text-align: center;
@@ -60,7 +63,7 @@
     margin-right: 167px;
 }
 
-/* UŻYTKOWNIK */
+/* Informacja o użytkowniku */
 #uzytkownik {
     display: flex;
     align-items: center;
@@ -90,12 +93,14 @@
     background-color: rgba(0,0,0,0.1);
 }
 
+/* Główna sekcja */
 #main-content {
     display: flex;
     gap: 30px;
     justify-content: space-between;
 }
 
+/* Lewa strona (z tabelą) */
 #lewa-strona {
     flex: 1;
 }
@@ -109,12 +114,20 @@
     margin-bottom: 15px;
 }
 
+/* 🔄 Scrollowana tabela */
+#lista-rezerwacji {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Tabela */
 #tabela-rezerwacji {
     width: 100%;
     border-collapse: collapse;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    overflow: hidden;
 }
 
 #tabela-rezerwacji th, #tabela-rezerwacji td {
@@ -124,15 +137,30 @@
     font-size: 14px;
 }
 
+/* Sticky nagłówek */
 #tabela-rezerwacji thead {
+    position: sticky;
+    top: 0;
     background-color: #4CAF50;
     color: white;
+    z-index: 1;
 }
 
+/* Hover na wierszach */
 #tabela-rezerwacji tbody tr:hover {
     background-color: #f1f1f1;
 }
 
+/* Scrollbar (opcjonalnie) */
+#lista-rezerwacji::-webkit-scrollbar {
+    width: 8px;
+}
+#lista-rezerwacji::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+/* Prawa strona */
 #prawa-strona {
     flex: 0 0 300px;
     display: flex;
@@ -175,6 +203,7 @@
     background-color: #45a049;
 }
 
+/* Komunikat błędu */
 #haslo-komunikat {
     color: red;
     font-weight: bold;
@@ -182,6 +211,7 @@
     display: none;
 }
 
+/* Modal */
 #modal {
     display: none;
     position: fixed;
@@ -202,4 +232,5 @@
     min-width: 300px;
     min-height: 200px;
     box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    text-align: center;
 }

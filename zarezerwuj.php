@@ -51,7 +51,7 @@ if (!$stmt) {
 $stmt->bind_param("issss", $miejsca, $data, $godzina, $status, $rezerwacja);
 
 if ($stmt->execute()) {
-    echo "✅ Rezerwacja zapisana pomyślnie do tabeli $tabela!";
+    echo "✅ Rezerwowano sale pomyślnie!";
 } else {
     echo "❌ Błąd zapytania: " . $stmt->error;
 }

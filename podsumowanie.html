@@ -107,10 +107,10 @@
             })
             .then(res => res.text())
             .then(msg => {
-                alert(msg);
-
-                // Po sukcesie możesz też przekierować:
-                // window.location.href = "dziekujemy.html";
+                alert(msg || "Rezerwacja zakończona pomyślnie");
+                setTimeout(() => {
+                    window.location.href = "logowanie.html";
+                }, 100);
             })
             .catch(err => {
                 alert("Błąd rezerwacji: " + err);
