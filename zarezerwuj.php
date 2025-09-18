@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 $rezerwacja = $_POST['rezerwacja'] ?? '';
 $data       = $_POST['data'] ?? '';
 $godzina    = $_POST['godzina'] ?? '';
-$sala       = $_POST['sala'] ?? ''; // NOWE!
+$sala       = $_POST['sala'] ?? '';
 
 // Walidacja danych
 if (!$rezerwacja || !$data || !$godzina || !$sala) {
@@ -34,6 +34,24 @@ switch ($sala) {
         echo "⚠️ Nieprawidłowa nazwa sali!";
         exit;
 }
+
+// Sprawdzenie czy termin jest już zajęty
+$sprawdzSql = "SELECT id FROM $tabela WHERE Data = ? AND Godzina = ?";
+$sprawdzStmt = $conn->prepare($sprawdzSql);
+if (!$sprawdzStmt) {
+    die("❌ Błąd przygotowania zapytania: " . $conn->error);
+}
+$sprawdzStmt->bind_param("ss", $data, $godzina);
+$sprawdzStmt->execute();
+$sprawdzStmt->store_result();
+
+if ($sprawdzStmt->num_rows > 0) {
+    echo "⚠️ Wybrana data i godzina są już zajęte!";
+    $sprawdzStmt->close();
+    $conn->close();
+    exit;
+}
+$sprawdzStmt->close();
 
 // Generowanie losowej liczby miejsc
 $miejsca = rand(10, 50);
