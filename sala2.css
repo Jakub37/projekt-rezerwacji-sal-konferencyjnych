@@ -60,7 +60,7 @@
 #uzytkownik {
     position: absolute;
     top: 20px;
-    left: 20px;
+    right: 20px;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -68,6 +68,7 @@
     padding: 5px 8px;
     border-radius: 8px;
     transition: background-color 0.3s ease;
+    float: right;
 }
 
 #uzytkownik img {
@@ -151,7 +152,7 @@
 #sala2 {
     position: absolute;
     top: 20px;
-    right: 20px;
+    left: 20px;
     text-decoration: none;
     color: #333;
     background-color: rgba(0,0,0,0.1);
