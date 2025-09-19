@@ -155,8 +155,14 @@
         })
         .then(res => res.text())
         .then(msg => {
-            alert("Termin dodany");
-            setTimeout(() => window.location.reload(), 1000);
+            if (msg === "Termin dodany") {
+                alert("Termin dodany");
+                setTimeout(() => window.location.reload(), 1000);
+            } else if (msg === "Termin zajęty") {
+                alert("Termin zajęty");
+            } else {
+                alert(msg); // Wyświetl inne komunikaty (np. błędy)
+            }
         })
         .catch(() => alert("Błąd połączenia z serwerem"));
     });
