@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala 1</title>
     <link rel="stylesheet" href="sala1.css">
-    
 </head>
-
 <body>
 <div id="glowny">
     <div id="blok_sali">
@@ -36,11 +34,8 @@
                         <table id="tabela-rezerwacji">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Miejsca</th>
                                 <th>Data</th>
                                 <th>Godzina</th>
-                                <th>Status</th>
                                 <th>Rezerwacja</th>
                             </tr>
                             </thead>
@@ -55,22 +50,19 @@
                             $conn = new mysqli($host, $user, $password, $dbname);
                             if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
 
-                            $sql = "SELECT id,Miejsca, Data, Godzina, Status, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina";
+                            $sql = "SELECT Data, Godzina, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina";
                             $result = $conn->query($sql);
 
-                            if ($result->num_rows > 0) {
+                            if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>
-                                    <td>" . htmlspecialchars($row['id']) . "</td>
-                                    <td>" . htmlspecialchars($row['Miejsca']) . "</td>
                                     <td>" . htmlspecialchars($row['Data']) . "</td>
                                     <td>" . htmlspecialchars($row['Godzina']) . "</td>
-                                    <td>" . htmlspecialchars($row['Status']) . "</td>
                                     <td>" . htmlspecialchars($row['Rezerwacja']) . "</td>
                                     </tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='6'>Brak dostępnych rezerwacji</td></tr>";
+                                echo "<tr><td colspan='3'>Brak zarezerwowanych dat</td></tr>";
                             }
                             ?>
                             </tbody>
