@@ -1,29 +1,32 @@
 <?php
 
 $servername = "localhost";
-$username = "root";       
-$password = "";           
+$username = "root";
+$password = "";
 $dbname = "modernforms_system";
 
-
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+$id = $_GET['id'] ?? '';
 
-$imie = $_GET['imie'] ?? '';
-$nazwisko = $_GET['nazwisko'] ?? '';
+// zabezpieczenie i konwersja na int
+$id = intval($id);
 
-// zabezpieczenie przed SQL injection
-$imie = $conn->real_escape_string($imie);
-$nazwisko = $conn->real_escape_string($nazwisko);
+if ($id <= 0) {
+    echo json_encode(["error" => "Nieprawidłowe ID użytkownika"]);
+    $conn->close();
+    exit;
+}
 
-
-$sql = "SELECT imie, nazwisko, telefon, email FROM uzytkownicy WHERE imie='$imie' AND nazwisko='$nazwisko' LIMIT 1";
-$result = $conn->query($sql);
+$sql = "SELECT imie, nazwisko, telefon, email FROM uzytkownicy WHERE id_uzytkownika = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
@@ -32,5 +35,5 @@ if ($result && $result->num_rows > 0) {
     echo json_encode(["error" => "Brak danych"]);
 }
 
+$stmt->close();
 $conn->close();
-?>

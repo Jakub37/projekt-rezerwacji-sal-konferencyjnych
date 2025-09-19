@@ -96,3 +96,8 @@
     border-color: #2575fc;
     box-shadow: 0 0 5px rgba(37,117,252,0.5);
 }
+#komunikat {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}

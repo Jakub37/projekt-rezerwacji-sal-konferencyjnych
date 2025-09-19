@@ -2,15 +2,18 @@
 session_start();
 $komunikat = "";
 
-// Połączenie z bazą i pobranie użytkowników
+// Połączenie z bazą danych
 $host = "localhost";
 $user = "root";
 $password = "";
 $dbname = "modernforms_system";
 $conn = new mysqli($host, $user, $password, $dbname);
+
 if ($conn->connect_error) {
-    die("Błąd połączenia z bazą!");
+    die("Błąd połączenia z bazą danych!");
 }
+
+// Pobranie listy użytkowników
 $uzytkownicy = [];
 $sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy";
 $result = $conn->query($sql);
@@ -28,37 +31,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id_uzytkownika === "" || $haslo === "") {
         $komunikat = "Wybierz użytkownika i wpisz hasło!";
     } else {
-        $sql = "SELECT Imie, Nazwisko FROM uzytkownicy WHERE id_uzytkownika = ? AND Haslo = ?";
+        $sql = "SELECT Imie, Nazwisko, Haslo FROM uzytkownicy WHERE id_uzytkownika = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("is", $id_uzytkownika, $haslo);
+        $stmt->bind_param("i", $id_uzytkownika);
         $stmt->execute();
         $stmt->store_result();
 
         if ($stmt->num_rows > 0) {
-            $stmt->bind_result($imie, $nazwisko);
+            $stmt->bind_result($imie, $nazwisko, $hash_z_bazy);
             $stmt->fetch();
-            echo "<script>
-                localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie)."');
-                localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko)."');
-                localStorage.setItem('uzytkownikId', '".htmlspecialchars($id_uzytkownika)."');
-                window.location.href = 'main.php';
-            </script>";
-            exit;
+
+            if (password_verify($haslo, $hash_z_bazy)) {
+                // Jeśli hasło jest poprawne, ustaw localStorage i przekieruj do main.php
+                echo "<script>
+                    localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie, ENT_QUOTES)."');
+                    localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko, ENT_QUOTES)."');
+                    localStorage.setItem('uzytkownikId', '".htmlspecialchars($id_uzytkownika, ENT_QUOTES)."');
+                    window.location.href = 'main.php';
+                </script>";
+                exit;
+            } else {
+                $komunikat = "Błędne hasło!";
+            }
         } else {
-            $komunikat = "Błędne hasło lub użytkownik!";
+            $komunikat = "Nie znaleziono użytkownika!";
         }
+
         $stmt->close();
     }
 }
+
 $conn->close();
 ?>
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
     <title>Logowanie</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="glowny">
@@ -66,7 +78,7 @@ $conn->close();
         <div id="blok_logowania">
             <h2>Wybierz użytkownika</h2>
             <form method="post" action="logowanie.php">
-                <select name="id_uzytkownika" id="id_uzytkownika">
+                <select name="id_uzytkownika" id="id_uzytkownika" required>
                     <option value="">-- wybierz --</option>
                     <?php foreach ($uzytkownicy as $u): ?>
                         <option value="<?php echo $u['id_uzytkownika']; ?>">
@@ -74,11 +86,12 @@ $conn->close();
                         </option>
                     <?php endforeach; ?>
                 </select><br>
-                <input type="password" placeholder="Hasło..." name="haslo" id="haslo"><br>
+                <input type="password" name="haslo" placeholder="Hasło..." id="haslo" required><br>
                 <button type="submit" id="przycisk">Zaloguj</button>
             </form>
+
             <?php if ($komunikat): ?>
-                <p id="komunikat" style="color:red; font-weight:bold; margin-top:10px;"><?php echo $komunikat; ?></p>
+                <p id="komunikat" style="color: red;"><?php echo htmlspecialchars($komunikat); ?></p>
             <?php endif; ?>
         </div>
     </div>

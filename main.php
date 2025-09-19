@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sala 1</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="main.css" />
 </head>
 <body>
 <div id="glowny">
@@ -12,14 +12,14 @@
 
         <div id="top-controls">
             <div id="uzytkownik">
-                <img src="uzytkownik.jpg" alt="Użytkownik">
+                <img src="uzytkownik.jpg" alt="Użytkownik" />
                 <div class="tekst">
                     <b><span>Użytkownik:</span></b>
                     <span id="imieNazwisko"></span>
                 </div>
             </div>
 
-            <div id="naglowek-sala"><h2>Rezerwacja Sal</h2></div>
+            <div id="naglowek-sala"><h1>Rezerwacja Sal</h1></div>
         </div>
 
         <div id="main-content">
@@ -70,16 +70,13 @@
             <div id="prawa-strona">
                 <h2>Rezerwacja</h2>
                 <label>Nr sali</label>
-                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2">
+                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2" />
                 <label>Data</label>
-                <input type="date" id="rezerwacja-data">
+                <input type="date" id="rezerwacja-data" />
                 <label>Od godziny</label>
-                <input type="time" id="rezerwacja-od_godziny">
+                <input type="time" id="rezerwacja-od_godziny" />
                 <label>Do godziny</label>
-                <input type="time" id="rezerwacja-do_godziny">
-                <label>Hasło</label>
-                <input type="password" id="rezerwacja-haslo" placeholder="Wpisz hasło">
-                <div id="haslo-komunikat"></div>
+                <input type="time" id="rezerwacja-do_godziny" />
                 <button id="przycisk-podsumowanie">Podsumowanie</button>
             </div>
         </div>
@@ -89,10 +86,10 @@
 <div id="modal">
     <div id="modal-content">
         <h2>Zalogowano jako:</h2>
-        <p id="modal-user"></p><br><br>
-        Numer telefonu<br>
-        <p id="modal-telefon"></p><br><br>
-        E-mail<br>
+        <p id="modal-user"></p><br /><br />
+        Numer telefonu<br />
+        <p id="modal-telefon"></p><br /><br />
+        E-mail<br />
         <p id="modal-email"></p>
     </div>
 </div>
@@ -100,6 +97,8 @@
 <script>
     const imieLS = localStorage.getItem("uzytkownikImie") || "";
     const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
+    const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
+
     document.getElementById("imieNazwisko").innerText = imieLS + " " + nazwiskoLS;
 
     // Modal
@@ -112,12 +111,20 @@
     uzytkownikDiv.addEventListener("click", () => {
         modal.style.display = "flex";
         modalUser.textContent = imieLS + " " + nazwiskoLS;
-        fetch(`get_user.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}`)
+
+        if (!uzytkownikId) {
+            modalTelefon.textContent = "Brak danych";
+            modalEmail.textContent = "Brak danych";
+            return;
+        }
+
+        fetch(`get_user.php?id=${encodeURIComponent(uzytkownikId)}`)
             .then(res => res.json())
             .then(data => {
                 modalTelefon.textContent = data.telefon || "Brak danych";
                 modalEmail.textContent = data.email || "Brak danych";
-            }).catch(() => {
+            })
+            .catch(() => {
                 modalTelefon.textContent = "Błąd połączenia";
                 modalEmail.textContent = "Błąd połączenia";
             });
@@ -127,8 +134,7 @@
         if(e.target === modal) modal.style.display = "none";
     });
 
-    // Sprawdzanie hasła i rezerwacja
-    const komunikatHaslo = document.getElementById("haslo-komunikat");
+    // Rezerwacja bez hasła
     const przyciskPodsumowanie = document.getElementById("przycisk-podsumowanie");
 
     przyciskPodsumowanie.addEventListener("click", () => {
@@ -136,41 +142,23 @@
         const data = document.getElementById("rezerwacja-data").value.trim();
         const od_godziny = document.getElementById("rezerwacja-od_godziny").value.trim();
         const do_godziny = document.getElementById("rezerwacja-do_godziny").value.trim();
-        const haslo = document.getElementById("rezerwacja-haslo").value.trim();
 
-        if (!nr_sali || !data || !od_godziny || !do_godziny || !haslo) {
-            komunikatHaslo.style.display = "block";
-            komunikatHaslo.textContent = "Wszystkie pola są wymagane.";
+        if (!nr_sali || !data || !od_godziny || !do_godziny) {
+            alert("Wszystkie pola są wymagane!");
             return;
         }
 
-        // Najpierw sprawdź hasło
-        fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(haslo)}`)
-            .then(res => res.json())
-            .then(dataResp => {
-                if (dataResp.success) {
-                    // Rezerwacja
-                    fetch("zarezerwuj.php", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(imieLS + " " + nazwiskoLS)}`
-                    })
-                    .then(res => res.text())
-                    .then(msg => {
-                        komunikatHaslo.style.display = "block";
-                        komunikatHaslo.textContent = msg;
-                        // Możesz dodać odświeżenie tabeli po rezerwacji
-                        setTimeout(() => window.location.reload(), 1000);
-                    });
-                } else {
-                    komunikatHaslo.style.display = "block";
-                    komunikatHaslo.textContent = dataResp.error || "Błędne hasło";
-                }
-            })
-            .catch(() => {
-                komunikatHaslo.style.display = "block";
-                komunikatHaslo.textContent = "Błąd połączenia z serwerem";
-            });
+        fetch("zarezerwuj.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(imieLS + " " + nazwiskoLS)}`
+        })
+        .then(res => res.text())
+        .then(msg => {
+            alert("Termin dodany");
+            setTimeout(() => window.location.reload(), 1000);
+        })
+        .catch(() => alert("Błąd połączenia z serwerem"));
     });
 </script>
 </body>
