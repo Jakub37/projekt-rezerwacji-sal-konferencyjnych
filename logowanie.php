@@ -2,43 +2,55 @@
 session_start();
 $komunikat = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $imie = trim($_POST['imie'] ?? '');
-    $nazwisko = trim($_POST['nazwisko'] ?? '');
-
-    if ($imie === "" || $nazwisko === "") {
-        $komunikat = "Wypełnij dane!";
-    } else {
-        $host = "localhost";
-        $user = "root";
-        $password = "";
-        $dbname = "modernforms_system";
-
-        $conn = new mysqli($host, $user, $password, $dbname);
-        if ($conn->connect_error) {
-            $komunikat = "Błąd połączenia z bazą!";
-        } else {
-            $sql = "SELECT id_uzytkownika FROM uzytkownicy WHERE Imie = ? AND Nazwisko = ?";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ss", $imie, $nazwisko);
-            $stmt->execute();
-            $stmt->store_result();
-
-            if ($stmt->num_rows > 0) {
-                echo "<script>
-                    localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie)."');
-                    localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko)."');
-                    window.location.href = 'wybor_sali.html';
-                </script>";
-                exit;
-            } else {
-                $komunikat = "Nie znaleziono użytkownika!";
-            }
-            $stmt->close();
-            $conn->close();
-        }
+// Połączenie z bazą i pobranie użytkowników
+$host = "localhost";
+$user = "root";
+$password = "";
+$dbname = "modernforms_system";
+$conn = new mysqli($host, $user, $password, $dbname);
+if ($conn->connect_error) {
+    die("Błąd połączenia z bazą!");
+}
+$uzytkownicy = [];
+$sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy";
+$result = $conn->query($sql);
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $uzytkownicy[] = $row;
     }
 }
+
+// Obsługa logowania
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id_uzytkownika = $_POST['id_uzytkownika'] ?? '';
+    $haslo = $_POST['haslo'] ?? '';
+
+    if ($id_uzytkownika === "" || $haslo === "") {
+        $komunikat = "Wybierz użytkownika i wpisz hasło!";
+    } else {
+        $sql = "SELECT Imie, Nazwisko FROM uzytkownicy WHERE id_uzytkownika = ? AND Haslo = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("is", $id_uzytkownika, $haslo);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows > 0) {
+            $stmt->bind_result($imie, $nazwisko);
+            $stmt->fetch();
+            echo "<script>
+                localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie)."');
+                localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko)."');
+                localStorage.setItem('uzytkownikId', '".htmlspecialchars($id_uzytkownika)."');
+                window.location.href = 'main.php';
+            </script>";
+            exit;
+        } else {
+            $komunikat = "Błędne hasło lub użytkownik!";
+        }
+        $stmt->close();
+    }
+}
+$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="pl">
@@ -52,10 +64,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div id="glowny">
         <h1 id="naglowek">LOGOWANIE</h1>
         <div id="blok_logowania">
-            <h2>Dane użytkownika</h2>
+            <h2>Wybierz użytkownika</h2>
             <form method="post" action="logowanie.php">
-                <input type="text" placeholder="Imię..." name="imie" id="dane_imie"><br>
-                <input type="text" placeholder="Nazwisko..." name="nazwisko" id="dane_nazwisko"><br>
+                <select name="id_uzytkownika" id="id_uzytkownika">
+                    <option value="">-- wybierz --</option>
+                    <?php foreach ($uzytkownicy as $u): ?>
+                        <option value="<?php echo $u['id_uzytkownika']; ?>">
+                            <?php echo htmlspecialchars($u['Imie'] . " " . $u['Nazwisko']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select><br>
+                <input type="password" placeholder="Hasło..." name="haslo" id="haslo"><br>
                 <button type="submit" id="przycisk">Zaloguj</button>
             </form>
             <?php if ($komunikat): ?>
@@ -63,36 +82,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
         </div>
     </div>
-</body>
-</html>
-        <div id="blok_logowania">
-            <h2>Dane użytkownika</h2>
-            <input type="text" placeholder="Imię..." id="dane_imie"><br>
-            <input type="text" placeholder="Nazwisko..." id="dane_nazwisko"><br>
-            <button id="przycisk">Zaloguj</button>
-            <p id="komunikat" style="color:red; font-weight:bold; display:none; margin-top:10px;"></p>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById("przycisk").addEventListener("click", function() {
-            const imie = document.getElementById("dane_imie").value.trim();
-            const nazwisko = document.getElementById("dane_nazwisko").value.trim();
-            const komunikat = document.getElementById("komunikat");
-
-            if (imie === "" || nazwisko === "") {
-                // jeśli którekolwiek pole jest puste
-                komunikat.textContent = "Wypełnij dane!";
-                komunikat.style.display = "block";
-            } else {
-                // zapis do localStorage
-                localStorage.setItem("uzytkownikImie", imie);
-                localStorage.setItem("uzytkownikNazwisko", nazwisko);
-
-                // przejście dalej
-                window.location.href = "wybor_sali.html";
-            }
-        });
-    </script>
 </body>
 </html>

@@ -1,77 +1,62 @@
 <?php
-$servername = "localhost";
-$username = "root";
+$host = "localhost";
+$user = "root";
 $password = "";
 $dbname = "modernforms_system";
 
-// Połączenie z bazą
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($host, $user, $password, $dbname);
 if ($conn->connect_error) {
     die("Błąd połączenia: " . $conn->connect_error);
 }
 
-// Dane z formularza
-$rezerwacja = $_POST['rezerwacja'] ?? '';
+$nr_sali    = $_POST['nr_sali'] ?? '';
 $data       = $_POST['data'] ?? '';
-$godzina    = $_POST['godzina'] ?? '';
-$sala       = $_POST['sala'] ?? '';
+$od_godziny = $_POST['od_godziny'] ?? '';
+$do_godziny = $_POST['do_godziny'] ?? '';
+$rezerwacja = $_POST['rezerwacja'] ?? '';
 
-// Walidacja danych
-if (!$rezerwacja || !$data || !$godzina || !$sala) {
-    echo "⚠️ Brak wymaganych danych!";
+if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja) {
+    echo "Wszystkie pola są wymagane!";
     exit;
 }
 
-// Wybór tabeli na podstawie sali
-switch ($sala) {
-    case "Sala Konferencyjna 1":
-        $tabela = "sala_konf1";
-        break;
-    case "Sala Konferencyjna 2":
-        $tabela = "sala_konf2";
-        break;
-    default:
-        echo "⚠️ Nieprawidłowa nazwa sali!";
-        exit;
-}
-
-// Sprawdzenie czy termin jest już zajęty
-$sprawdzSql = "SELECT id FROM $tabela WHERE Data = ? AND Godzina = ?";
+// Sprawdzenie czy sala jest już zajęta w tym terminie i godzinach
+$sprawdzSql = "SELECT id FROM sale 
+    WHERE nr_sali = ? 
+    AND data = ? 
+    AND (
+        (od_godziny < ? AND do_godziny > ?) OR
+        (od_godziny < ? AND do_godziny > ?) OR
+        (od_godziny >= ? AND do_godziny <= ?)
+    )";
 $sprawdzStmt = $conn->prepare($sprawdzSql);
-if (!$sprawdzStmt) {
-    die("❌ Błąd przygotowania zapytania: " . $conn->error);
-}
-$sprawdzStmt->bind_param("ss", $data, $godzina);
+$sprawdzStmt->bind_param(
+    "isssssss",
+    $nr_sali, $data,
+    $do_godziny, $od_godziny,
+    $od_godziny, $do_godziny,
+    $od_godziny, $do_godziny
+);
 $sprawdzStmt->execute();
 $sprawdzStmt->store_result();
 
 if ($sprawdzStmt->num_rows > 0) {
-    echo "⚠️ Wybrana data i godzina są już zajęte!";
+    echo "Wybrana sala jest już zajęta w tym terminie i godzinach!";
     $sprawdzStmt->close();
     $conn->close();
     exit;
 }
 $sprawdzStmt->close();
 
-// Generowanie losowej liczby miejsc
-$miejsca = rand(10, 50);
-$status  = "Zarezerwowano";
-
-// Przygotowanie i wykonanie zapytania
-$sql = "INSERT INTO $tabela (Miejsca, Data, Godzina, Status, Rezerwacja) 
-        VALUES (?, ?, ?, ?, ?)";
+// Dodanie rezerwacji
+$sql = "INSERT INTO sale (nr_sali, data, od_godziny, do_godziny, rezerwacja) VALUES (?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
-
-if (!$stmt) {
-    die("❌ Błąd przygotowania zapytania: " . $conn->error);
-}
-
-$stmt->bind_param("issss", $miejsca, $data, $godzina, $status, $rezerwacja);
+$stmt->bind_param("issss", $nr_sali, $data, $od_godziny, $do_godziny, $rezerwacja);
 
 if ($stmt->execute()) {
-    echo "✅ Rezerwowano sale pomyślnie!";
+    echo "Rezerwacja dodana!";
 } else {
-    echo "❌ Błąd zapytania: " . $stmt->error;
+    echo "Błąd rezerwacji: " . $stmt->error;
 }
 
 $stmt->close();

@@ -1,4 +1,3 @@
-/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -34,20 +33,6 @@
     align-items: center;
     margin-bottom: 75px;
     gap: 20px;
-}
-
-#sala2 {
-    text-decoration: none;
-    color: #333;
-    background-color: rgba(0,0,0,0.1);
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-
-#sala2:hover {
-    background-color: rgba(0,0,0,0.2);
 }
 
 /* Nagłówek na środku */
@@ -128,16 +113,16 @@
 #tabela-rezerwacji {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* Dodane: równe szerokości kolumn */
+    table-layout: fixed; /* równe szerokości kolumn */
 }
 
 #tabela-rezerwacji th, #tabela-rezerwacji td {
+    border: 1px solid #ccc;
     padding: 12px 15px;
-    border-bottom: 1px solid #ddd;
     text-align: center;
-    font-size: 14px;
-    width: 16.66%; /* Dodane: 6 kolumn po równo */
+    width: 20%; /* 5 kolumn po równo */
     word-break: break-word;
+    font-size: 14px;
 }
 
 /* Sticky nagłówek */
@@ -161,6 +146,9 @@
 #lista-rezerwacji::-webkit-scrollbar-thumb {
     background-color: rgba(0,0,0,0.2);
     border-radius: 4px;
+}
+#lista-rezerwacji::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 /* Prawa strona */

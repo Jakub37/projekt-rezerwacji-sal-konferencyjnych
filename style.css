@@ -1,8 +1,3 @@
-
-/* tło całej strony */
-
-
-
 * {
     margin: 0px;
     padding: 0px;
@@ -12,20 +7,12 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-
     justify-content: center;   /* wyśrodkowanie bloku logowania */
-
-    justify-content: center;   
-
     align-items: center;
     font-family: Arial, sans-serif;
 }
 
-
-
 /* blok logowania */
-
-
 #blok_logowania {
     background-color: white;
     padding: 30px;
@@ -35,17 +22,13 @@
     box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
 }
 
-
 /* nagłówek */
-
 #blok_logowania h2 {
     margin-bottom: 20px;
     color: #333;
 }
 
-
-
-
+/* inputy */
 #blok_logowania input {
     width: 80%;
     padding: 12px;
@@ -57,17 +40,12 @@
     font-size: 14px;
 }
 
-
-
-
 #blok_logowania input:focus {
     border-color: #2575fc;
     box-shadow: 0 0 5px rgba(37,117,252,0.5);
 }
 
-
-
-
+/* przycisk */
 #przycisk {
     width: 85%;
     padding: 12px;
@@ -84,19 +62,37 @@
 #przycisk:hover {
     background: linear-gradient(135deg, #2575fc, #6a11cb);
 }
+
+/* nagłówek główny */
 #naglowek {
     font-family: 'Courier New', Courier, monospace;
     color: white;
     font-size: 70px;
     font-weight: bold;
     text-align: center;
-
     margin-bottom: 40px;  /* odstęp od bloku logowania */
     position: relative;
     top: -30px;            /* przesuwa napis trochę w górę */
-
-    margin-bottom: 40px; 
-    position: relative;
-    top: -30px;           
 }
 
+/* styl dla listy rozwijanej (select) */
+#blok_logowania select {
+    width: 80%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    transition: 0.3s;
+    font-size: 14px;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    box-sizing: border-box;
+}
+
+#blok_logowania select:focus {
+    border-color: #2575fc;
+    box-shadow: 0 0 5px rgba(37,117,252,0.5);
+}

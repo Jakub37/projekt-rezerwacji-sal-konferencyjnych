@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala 1</title>
-    <link rel="stylesheet" href="sala1.css">
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
 <div id="glowny">
@@ -19,9 +19,7 @@
                 </div>
             </div>
 
-            <div id="naglowek-sala"><h2>Sala Konferencyjna 1</h2></div>
-
-            <a id="sala2" href="sala2.php">Sala konferencyjna 2 →</a>
+            <div id="naglowek-sala"><h2>Rezerwacja Sal</h2></div>
         </div>
 
         <div id="main-content">
@@ -34,35 +32,33 @@
                         <table id="tabela-rezerwacji">
                             <thead>
                             <tr>
+                                <th>Nr sali</th>
                                 <th>Data</th>
-                                <th>Godzina</th>
+                                <th>Od godziny</th>
+                                <th>Do godziny</th>
                                 <th>Rezerwacja</th>
                             </tr>
                             </thead>
                             <tbody>
                             <?php
-                            // Połączenie z bazą
-                            $host = "localhost";
-                            $user = "root";
-                            $password = "";
-                            $dbname = "modernforms_system";
-
-                            $conn = new mysqli($host, $user, $password, $dbname);
+                            $conn = new mysqli("localhost", "root", "", "modernforms_system");
                             if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
 
-                            $sql = "SELECT Data, Godzina, Rezerwacja FROM sala_konf1 WHERE Data >= CURDATE() ORDER BY Data, Godzina";
+                            $sql = "SELECT nr_sali, data, od_godziny, do_godziny, rezerwacja FROM sale WHERE data >= CURDATE() ORDER BY data, od_godziny";
                             $result = $conn->query($sql);
 
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>
-                                    <td>" . htmlspecialchars($row['Data']) . "</td>
-                                    <td>" . htmlspecialchars($row['Godzina']) . "</td>
-                                    <td>" . htmlspecialchars($row['Rezerwacja']) . "</td>
+                                    <td>" . htmlspecialchars($row['nr_sali']) . "</td>
+                                    <td>" . htmlspecialchars($row['data']) . "</td>
+                                    <td>" . htmlspecialchars($row['od_godziny']) . "</td>
+                                    <td>" . htmlspecialchars($row['do_godziny']) . "</td>
+                                    <td>" . htmlspecialchars($row['rezerwacja']) . "</td>
                                     </tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='3'>Brak zarezerwowanych dat</td></tr>";
+                                echo "<tr><td colspan='5'>Brak zarezerwowanych terminów</td></tr>";
                             }
                             ?>
                             </tbody>
@@ -73,10 +69,14 @@
 
             <div id="prawa-strona">
                 <h2>Rezerwacja</h2>
+                <label>Nr sali</label>
+                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2">
                 <label>Data</label>
-                <input type="text" id="rezerwacja-data" placeholder="RRRR-MM-DD">
-                <label>Godzina</label>
-                <input type="text" id="rezerwacja-godzina" placeholder="HH:MM-HH:MM">
+                <input type="date" id="rezerwacja-data">
+                <label>Od godziny</label>
+                <input type="time" id="rezerwacja-od_godziny">
+                <label>Do godziny</label>
+                <input type="time" id="rezerwacja-do_godziny">
                 <label>Hasło</label>
                 <input type="password" id="rezerwacja-haslo" placeholder="Wpisz hasło">
                 <div id="haslo-komunikat"></div>
@@ -127,23 +127,44 @@
         if(e.target === modal) modal.style.display = "none";
     });
 
-    // Sprawdzanie hasła
-    const inputHaslo = document.getElementById("rezerwacja-haslo");
+    // Sprawdzanie hasła i rezerwacja
     const komunikatHaslo = document.getElementById("haslo-komunikat");
     const przyciskPodsumowanie = document.getElementById("przycisk-podsumowanie");
 
     przyciskPodsumowanie.addEventListener("click", () => {
-        fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(inputHaslo.value)}`)
+        const nr_sali = document.getElementById("rezerwacja-nr_sali").value.trim();
+        const data = document.getElementById("rezerwacja-data").value.trim();
+        const od_godziny = document.getElementById("rezerwacja-od_godziny").value.trim();
+        const do_godziny = document.getElementById("rezerwacja-do_godziny").value.trim();
+        const haslo = document.getElementById("rezerwacja-haslo").value.trim();
+
+        if (!nr_sali || !data || !od_godziny || !do_godziny || !haslo) {
+            komunikatHaslo.style.display = "block";
+            komunikatHaslo.textContent = "Wszystkie pola są wymagane.";
+            return;
+        }
+
+        // Najpierw sprawdź hasło
+        fetch(`check_password.php?imie=${encodeURIComponent(imieLS)}&nazwisko=${encodeURIComponent(nazwiskoLS)}&haslo=${encodeURIComponent(haslo)}`)
             .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    localStorage.setItem("rezerwacjaData", document.getElementById("rezerwacja-data").value);
-                    localStorage.setItem("rezerwacjaGodzina", document.getElementById("rezerwacja-godzina").value);
-                    localStorage.setItem("rezerwacjaSala", "Sala Konferencyjna 1");
-                    window.location.href = "podsumowanie.html";
+            .then(dataResp => {
+                if (dataResp.success) {
+                    // Rezerwacja
+                    fetch("zarezerwuj.php", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(imieLS + " " + nazwiskoLS)}`
+                    })
+                    .then(res => res.text())
+                    .then(msg => {
+                        komunikatHaslo.style.display = "block";
+                        komunikatHaslo.textContent = msg;
+                        // Możesz dodać odświeżenie tabeli po rezerwacji
+                        setTimeout(() => window.location.reload(), 1000);
+                    });
                 } else {
                     komunikatHaslo.style.display = "block";
-                    komunikatHaslo.textContent = data.error || "Błędne hasło";
+                    komunikatHaslo.textContent = dataResp.error || "Błędne hasło";
                 }
             })
             .catch(() => {
