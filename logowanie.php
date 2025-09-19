@@ -2,7 +2,7 @@
 session_start();
 $komunikat = "";
 
-// Połączenie z bazą danych
+
 $host = "localhost";
 $user = "root";
 $password = "";
@@ -13,7 +13,6 @@ if ($conn->connect_error) {
     die("Błąd połączenia z bazą danych!");
 }
 
-// Pobranie listy użytkowników
 $uzytkownicy = [];
 $sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy";
 $result = $conn->query($sql);
@@ -42,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($haslo, $hash_z_bazy)) {
-                // Jeśli hasło jest poprawne, ustaw localStorage i przekieruj do main.php
+                // Jeśli hasło jest poprawne to się  ustawia localStorage i przekierowywyuje do main.php
                 echo "<script>
                     localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie, ENT_QUOTES)."');
                     localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko, ENT_QUOTES)."');

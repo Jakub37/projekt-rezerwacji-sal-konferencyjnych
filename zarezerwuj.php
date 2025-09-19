@@ -20,7 +20,6 @@ if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja) {
     exit;
 }
 
-// Upewnij się, że czas jest w tym samym formacie co w bazie, np. "HH:MM:SS"
 $new_start = $od_godziny;
 $new_end = $do_godziny;
 
@@ -36,7 +35,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result && $result->num_rows > 0) {
-    echo "Termin zajęty"; // Zmieniony komunikat
+    echo "Termin zajęty";
     exit;
 }
 

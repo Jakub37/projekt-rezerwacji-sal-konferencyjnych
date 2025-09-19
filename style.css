@@ -70,9 +70,9 @@
     font-size: 70px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 40px;  /* odstęp od bloku logowania */
+    margin-bottom: 40px;  
     position: relative;
-    top: -30px;            /* przesuwa napis trochę w górę */
+    top: -30px;            
 }
 
 /* styl dla listy rozwijanej (select) */

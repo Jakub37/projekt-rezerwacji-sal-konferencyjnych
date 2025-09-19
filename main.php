@@ -9,7 +9,6 @@
 <body>
 <div id="glowny">
     <div id="blok_sali">
-
         <div id="top-controls">
             <div id="uzytkownik">
                 <img src="uzytkownik.jpg" alt="Użytkownik" />
@@ -37,6 +36,7 @@
                                 <th>Od godziny</th>
                                 <th>Do godziny</th>
                                 <th>Rezerwacja</th>
+                                <th>Edycja</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -49,16 +49,23 @@
 
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
-                                    echo "<tr>
-                                    <td>" . htmlspecialchars($row['nr_sali']) . "</td>
-                                    <td>" . htmlspecialchars($row['data']) . "</td>
-                                    <td>" . htmlspecialchars($row['od_godziny']) . "</td>
-                                    <td>" . htmlspecialchars($row['do_godziny']) . "</td>
-                                    <td>" . htmlspecialchars($row['rezerwacja']) . "</td>
+                                    $id = htmlspecialchars($row['nr_sali']) . '-' . htmlspecialchars($row['data']) . '-' . htmlspecialchars($row['od_godziny']);
+                                    $rezerwacja = htmlspecialchars($row['rezerwacja']);
+                                    echo "<tr data-id='{$id}' data-owner='{$rezerwacja}'>
+                                        <td>" . htmlspecialchars($row['nr_sali']) . "</td>
+                                        <td>" . htmlspecialchars($row['data']) . "</td>
+                                        <td>" . htmlspecialchars($row['od_godziny']) . "</td>
+                                        <td>" . htmlspecialchars($row['do_godziny']) . "</td>
+                                        <td>{$rezerwacja}</td>
+                                        <td>
+                                            <button class='edytuj-btn'>✏</button>
+                                            <button class='zatwierdz-btn' style='display: none;'>✔</button>
+                                            <button class='usun-btn'>✖</button>
+                                        </td>
                                     </tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='5'>Brak zarezerwowanych terminów</td></tr>";
+                                echo "<tr><td colspan='6'>Brak zarezerwowanych terminów</td></tr>";
                             }
                             ?>
                             </tbody>
@@ -95,77 +102,140 @@
 </div>
 
 <script>
-    const imieLS = localStorage.getItem("uzytkownikImie") || "";
-    const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
-    const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
+const imieLS = localStorage.getItem("uzytkownikImie") || "";
+const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
+const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
+const pelneImie = imieLS + " " + nazwiskoLS;
 
-    document.getElementById("imieNazwisko").innerText = imieLS + " " + nazwiskoLS;
+document.getElementById("imieNazwisko").innerText = pelneImie;
 
-    // Modal
-    const uzytkownikDiv = document.getElementById("uzytkownik");
-    const modal = document.getElementById("modal");
-    const modalUser = document.getElementById("modal-user");
-    const modalTelefon = document.getElementById("modal-telefon");
-    const modalEmail = document.getElementById("modal-email");
+const uzytkownikDiv = document.getElementById("uzytkownik");
+const modal = document.getElementById("modal");
+const modalUser = document.getElementById("modal-user");
+const modalTelefon = document.getElementById("modal-telefon");
+const modalEmail = document.getElementById("modal-email");
 
-    uzytkownikDiv.addEventListener("click", () => {
-        modal.style.display = "flex";
-        modalUser.textContent = imieLS + " " + nazwiskoLS;
+uzytkownikDiv.addEventListener("click", () => {
+    modal.style.display = "flex";
+    modalUser.textContent = pelneImie;
 
-        if (!uzytkownikId) {
-            modalTelefon.textContent = "Brak danych";
-            modalEmail.textContent = "Brak danych";
-            return;
-        }
+    if (!uzytkownikId) {
+        modalTelefon.textContent = "Brak danych";
+        modalEmail.textContent = "Brak danych";
+        return;
+    }
 
-        fetch(`get_user.php?id=${encodeURIComponent(uzytkownikId)}`)
-            .then(res => res.json())
-            .then(data => {
-                modalTelefon.textContent = data.telefon || "Brak danych";
-                modalEmail.textContent = data.email || "Brak danych";
-            })
-            .catch(() => {
-                modalTelefon.textContent = "Błąd połączenia";
-                modalEmail.textContent = "Błąd połączenia";
-            });
-    });
-
-    modal.addEventListener("click", e => {
-        if(e.target === modal) modal.style.display = "none";
-    });
-
-    // Rezerwacja bez hasła
-    const przyciskPodsumowanie = document.getElementById("przycisk-podsumowanie");
-
-    przyciskPodsumowanie.addEventListener("click", () => {
-        const nr_sali = document.getElementById("rezerwacja-nr_sali").value.trim();
-        const data = document.getElementById("rezerwacja-data").value.trim();
-        const od_godziny = document.getElementById("rezerwacja-od_godziny").value.trim();
-        const do_godziny = document.getElementById("rezerwacja-do_godziny").value.trim();
-
-        if (!nr_sali || !data || !od_godziny || !do_godziny) {
-            alert("Wszystkie pola są wymagane!");
-            return;
-        }
-
-        fetch("zarezerwuj.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(imieLS + " " + nazwiskoLS)}`
+    fetch(`get_user.php?id=${encodeURIComponent(uzytkownikId)}`)
+        .then(res => res.json())
+        .then(data => {
+            modalTelefon.textContent = data.telefon || "Brak danych";
+            modalEmail.textContent = data.email || "Brak danych";
         })
-        .then(res => res.text())
-        .then(msg => {
-            if (msg === "Termin dodany") {
-                alert("Termin dodany");
-                setTimeout(() => window.location.reload(), 1000);
-            } else if (msg === "Termin zajęty") {
-                alert("Termin zajęty");
-            } else {
-                alert(msg); // Wyświetl inne komunikaty (np. błędy)
+        .catch(() => {
+            modalTelefon.textContent = "Błąd połączenia";
+            modalEmail.textContent = "Błąd połączenia";
+        });
+});
+
+modal.addEventListener("click", e => {
+    if(e.target === modal) modal.style.display = "none";
+});
+
+// Rezerwacja
+document.getElementById("przycisk-podsumowanie").addEventListener("click", () => {
+    const nr_sali = document.getElementById("rezerwacja-nr_sali").value.trim();
+    const data = document.getElementById("rezerwacja-data").value.trim();
+    const od_godziny = document.getElementById("rezerwacja-od_godziny").value.trim();
+    const do_godziny = document.getElementById("rezerwacja-do_godziny").value.trim();
+
+    if (!nr_sali || !data || !od_godziny || !do_godziny) {
+        alert("Wszystkie pola są wymagane!");
+        return;
+    }
+
+    fetch("zarezerwuj.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(pelneImie)}`
+    })
+    .then(res => res.text())
+    .then(msg => {
+        alert(msg);
+        if (msg === "Termin dodany") location.reload();
+    })
+    .catch(() => alert("Błąd połączenia z serwerem"));
+});
+
+// Edycja i usuwanie
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("#tabela-rezerwacji tbody tr").forEach(row => {
+        const owner = row.dataset.owner;
+        const edytujBtn = row.querySelector(".edytuj-btn");
+        const zatwierdzBtn = row.querySelector(".zatwierdz-btn");
+        const usunBtn = row.querySelector(".usun-btn");
+
+        if (owner !== pelneImie) {
+            edytujBtn.disabled = true;
+            usunBtn.disabled = true;
+            return;
+        }
+
+        edytujBtn.addEventListener("click", () => {
+            const cells = row.querySelectorAll("td");
+            for (let i = 0; i < 4; i++) {
+                const input = document.createElement("input");
+                input.value = cells[i].textContent;
+                input.type = (i === 1) ? "date" : (i === 2 || i === 3) ? "time" : "number";
+                cells[i].innerHTML = "";
+                cells[i].appendChild(input);
             }
-        })
-        .catch(() => alert("Błąd połączenia z serwerem"));
+            edytujBtn.style.display = "none";
+            zatwierdzBtn.style.display = "inline-block";
+        });
+
+        zatwierdzBtn.addEventListener("click", () => {
+            const inputs = row.querySelectorAll("td input");
+            const [nr_sali, data, od_godziny, do_godziny] = Array.from(inputs).map(input => input.value);
+
+            if (!nr_sali || !data || !od_godziny || !do_godziny) {
+                alert("Wszystkie pola muszą być wypełnione.");
+                return;
+            }
+
+            fetch("edytuj.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&do_godziny=${do_godziny}&rezerwacja=${encodeURIComponent(pelneImie)}`
+            })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg || "Zatwierdzono zmiany rezerwacji");
+                location.reload();
+            })
+            .catch(() => alert("Błąd połączenia z serwerem"));
+        });
+
+        usunBtn.addEventListener("click", () => {
+            if (!confirm("Czy na pewno chcesz usunąć tę rezerwację?")) return;
+
+            const nr_sali = row.cells[0].textContent;
+            const data = row.cells[1].textContent;
+            const od_godziny = row.cells[2].textContent;
+
+            fetch("usun.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&rezerwacja=${encodeURIComponent(pelneImie)}`
+            })
+            .then(res => res.text())
+            .then(msg => {
+                alert(msg || "Usunięto rezerwację");
+                location.reload();
+            })
+            .catch(() => alert("Błąd połączenia z serwerem"));
+        });
     });
+});
 </script>
 </body>
 </html>
