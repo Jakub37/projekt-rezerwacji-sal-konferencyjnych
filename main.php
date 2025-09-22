@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Sala 1</title>
     <link rel="stylesheet" href="main.css" />
+    <link rel="icon" href="uzytkownik.jpg" type="image/x-icon" />
 </head>
 <body>
 <div id="glowny">
@@ -17,16 +18,13 @@
                     <span id="imieNazwisko"></span>
                 </div>
             </div>
-
             <div id="naglowek-sala"><h1>Rezerwacja Sal</h1></div>
         </div>
 
         <div id="main-content">
             <div id="lewa-strona">
                 <div id="rezerwacje">
-                    <div id="xd">
-                        <h2>Zarezerwowane terminy</h2>
-                    </div>
+                    <div id="xd"><h2>Zarezerwowane terminy</h2></div>
                     <div id="lista-rezerwacji">
                         <table id="tabela-rezerwacji">
                             <thead>
@@ -44,23 +42,25 @@
                             $conn = new mysqli("localhost", "root", "", "modernforms_system");
                             if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
 
-                            $sql = "SELECT nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika FROM sale WHERE data >= CURDATE() ORDER BY data, od_godziny";
+                            $sql = "SELECT id, nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika 
+                                    FROM sale 
+                                    WHERE data >= CURDATE() 
+                                    ORDER BY data, od_godziny";
                             $result = $conn->query($sql);
 
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
-                                    $id = htmlspecialchars($row['nr_sali']) . '-' . htmlspecialchars($row['data']) . '-' . htmlspecialchars($row['od_godziny']);
-                                    $rezerwacja = htmlspecialchars($row['rezerwacja']);
+                                    $id = htmlspecialchars($row['id']);
                                     $ownerId = htmlspecialchars($row['id_uzytkownika']);
                                     echo "<tr data-id='{$id}' data-owner='{$ownerId}'>
                                         <td>" . htmlspecialchars($row['nr_sali']) . "</td>
                                         <td>" . htmlspecialchars($row['data']) . "</td>
                                         <td>" . htmlspecialchars($row['od_godziny']) . "</td>
                                         <td>" . htmlspecialchars($row['do_godziny']) . "</td>
-                                        <td>{$rezerwacja}</td>
+                                        <td>" . htmlspecialchars($row['rezerwacja']) . "</td>
                                         <td>
                                             <button class='edytuj-btn'>✏</button>
-                                            <button class='zatwierdz-btn' style='display: none;'>✔</button>
+                                            <button class='zatwierdz-btn' style='display:none;'>✔</button>
                                             <button class='usun-btn'>✖</button>
                                         </td>
                                     </tr>";
@@ -104,14 +104,14 @@
 </div>
 
 <script>
-// Pobierz dane użytkownika z localStorage
+// dane użytkownika
 const imieLS = localStorage.getItem("uzytkownikImie") || "";
 const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
 const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
 const pelneImie = imieLS + " " + nazwiskoLS;
-
 document.getElementById("imieNazwisko").innerText = pelneImie;
 
+// modal
 const uzytkownikDiv = document.getElementById("uzytkownik");
 const modal = document.getElementById("modal");
 const modalUser = document.getElementById("modal-user");
@@ -141,10 +141,10 @@ uzytkownikDiv.addEventListener("click", () => {
 });
 
 modal.addEventListener("click", e => {
-    if(e.target === modal) modal.style.display = "none";
+    if (e.target === modal) modal.style.display = "none";
 });
 
-// Rezerwacja - dodanie nowej
+// dodanie rezerwacji
 document.getElementById("przycisk-podsumowanie").addEventListener("click", () => {
     const nr_sali = document.getElementById("rezerwacja-nr_sali").value.trim();
     const data = document.getElementById("rezerwacja-data").value.trim();
@@ -169,12 +169,13 @@ document.getElementById("przycisk-podsumowanie").addEventListener("click", () =>
     .catch(() => alert("Błąd połączenia z serwerem"));
 });
 
-// Edycja i usuwanie - dostępne tylko dla właściciela
+// edycja i usuwanie
 document.addEventListener("DOMContentLoaded", () => {
     const currentUserId = uzytkownikId;
 
     document.querySelectorAll("#tabela-rezerwacji tbody tr").forEach(row => {
         const ownerId = row.dataset.owner;
+        const recordId = row.dataset.id;
 
         const edytujBtn = row.querySelector(".edytuj-btn");
         const zatwierdzBtn = row.querySelector(".zatwierdz-btn");
@@ -211,12 +212,12 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch("edytuj.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&do_godziny=${do_godziny}&id_uzytkownika=${encodeURIComponent(currentUserId)}`
+                body: `id=${encodeURIComponent(recordId)}&nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&id_uzytkownika=${encodeURIComponent(currentUserId)}&rezerwacja=${encodeURIComponent(pelneImie)}`
             })
             .then(res => res.text())
             .then(msg => {
-                alert(msg || "Zatwierdzono zmiany rezerwacji");
-                location.reload();
+                alert(msg);
+                if (msg === "Rezerwacja zaktualizowana") location.reload();
             })
             .catch(() => alert("Błąd połączenia z serwerem"));
         });
@@ -224,14 +225,10 @@ document.addEventListener("DOMContentLoaded", () => {
         usunBtn.addEventListener("click", () => {
             if (!confirm("Czy na pewno chcesz usunąć tę rezerwację?")) return;
 
-            const nr_sali = row.cells[0].textContent;
-            const data = row.cells[1].textContent;
-            const od_godziny = row.cells[2].textContent;
-
             fetch("usun.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&id_uzytkownika=${encodeURIComponent(currentUserId)}`
+                body: `id=${encodeURIComponent(recordId)}&id_uzytkownika=${encodeURIComponent(currentUserId)}`
             })
             .then(res => res.text())
             .then(msg => {
