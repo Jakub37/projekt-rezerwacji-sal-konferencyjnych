@@ -14,16 +14,14 @@ $data = $_POST['data'] ?? '';
 $od_godziny = $_POST['od_godziny'] ?? '';
 $do_godziny = $_POST['do_godziny'] ?? '';
 $rezerwacja = $_POST['rezerwacja'] ?? '';
+$id_uzytkownika = $_POST['id_uzytkownika'] ?? '';
 
-if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja) {
+if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja || !$id_uzytkownika) {
     echo "Brakuje danych!";
     exit;
 }
 
-$new_start = $od_godziny;
-$new_end = $do_godziny;
-
-// Zapytanie sprawdzające kolizję
+// Sprawdzenie kolizji terminów
 $sql = "SELECT * FROM sale
         WHERE nr_sali = ?
           AND data = ?
@@ -39,11 +37,11 @@ if ($result && $result->num_rows > 0) {
     exit;
 }
 
-// Jeśli nie ma kolizji, wstaw rezerwację
-$sql2 = "INSERT INTO sale (nr_sali, data, od_godziny, do_godziny, rezerwacja)
-         VALUES (?, ?, ?, ?, ?)";
+// Wstawienie rezerwacji wraz z id_uzytkownika
+$sql2 = "INSERT INTO sale (nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika)
+         VALUES (?, ?, ?, ?, ?, ?)";
 $stmt2 = $conn->prepare($sql2);
-$stmt2->bind_param("sssss", $nr_sali, $data, $od_godziny, $do_godziny, $rezerwacja);
+$stmt2->bind_param("sssssi", $nr_sali, $data, $od_godziny, $do_godziny, $rezerwacja, $id_uzytkownika);
 
 if ($stmt2->execute()) {
     echo "Termin dodany";

@@ -44,14 +44,15 @@
                             $conn = new mysqli("localhost", "root", "", "modernforms_system");
                             if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
 
-                            $sql = "SELECT nr_sali, data, od_godziny, do_godziny, rezerwacja FROM sale WHERE data >= CURDATE() ORDER BY data, od_godziny";
+                            $sql = "SELECT nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika FROM sale WHERE data >= CURDATE() ORDER BY data, od_godziny";
                             $result = $conn->query($sql);
 
                             if ($result && $result->num_rows > 0) {
                                 while ($row = $result->fetch_assoc()) {
                                     $id = htmlspecialchars($row['nr_sali']) . '-' . htmlspecialchars($row['data']) . '-' . htmlspecialchars($row['od_godziny']);
                                     $rezerwacja = htmlspecialchars($row['rezerwacja']);
-                                    echo "<tr data-id='{$id}' data-owner='{$rezerwacja}'>
+                                    $ownerId = htmlspecialchars($row['id_uzytkownika']);
+                                    echo "<tr data-id='{$id}' data-owner='{$ownerId}'>
                                         <td>" . htmlspecialchars($row['nr_sali']) . "</td>
                                         <td>" . htmlspecialchars($row['data']) . "</td>
                                         <td>" . htmlspecialchars($row['od_godziny']) . "</td>
@@ -67,6 +68,7 @@
                             } else {
                                 echo "<tr><td colspan='6'>Brak zarezerwowanych terminów</td></tr>";
                             }
+                            $conn->close();
                             ?>
                             </tbody>
                         </table>
@@ -102,6 +104,7 @@
 </div>
 
 <script>
+// Pobierz dane użytkownika z localStorage
 const imieLS = localStorage.getItem("uzytkownikImie") || "";
 const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
 const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
@@ -141,7 +144,7 @@ modal.addEventListener("click", e => {
     if(e.target === modal) modal.style.display = "none";
 });
 
-// Rezerwacja
+// Rezerwacja - dodanie nowej
 document.getElementById("przycisk-podsumowanie").addEventListener("click", () => {
     const nr_sali = document.getElementById("rezerwacja-nr_sali").value.trim();
     const data = document.getElementById("rezerwacja-data").value.trim();
@@ -156,7 +159,7 @@ document.getElementById("przycisk-podsumowanie").addEventListener("click", () =>
     fetch("zarezerwuj.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(pelneImie)}`
+        body: `nr_sali=${encodeURIComponent(nr_sali)}&data=${encodeURIComponent(data)}&od_godziny=${encodeURIComponent(od_godziny)}&do_godziny=${encodeURIComponent(do_godziny)}&rezerwacja=${encodeURIComponent(pelneImie)}&id_uzytkownika=${encodeURIComponent(uzytkownikId)}`
     })
     .then(res => res.text())
     .then(msg => {
@@ -166,15 +169,18 @@ document.getElementById("przycisk-podsumowanie").addEventListener("click", () =>
     .catch(() => alert("Błąd połączenia z serwerem"));
 });
 
-// Edycja i usuwanie
+// Edycja i usuwanie - dostępne tylko dla właściciela
 document.addEventListener("DOMContentLoaded", () => {
+    const currentUserId = uzytkownikId;
+
     document.querySelectorAll("#tabela-rezerwacji tbody tr").forEach(row => {
-        const owner = row.dataset.owner;
+        const ownerId = row.dataset.owner;
+
         const edytujBtn = row.querySelector(".edytuj-btn");
         const zatwierdzBtn = row.querySelector(".zatwierdz-btn");
         const usunBtn = row.querySelector(".usun-btn");
 
-        if (owner !== pelneImie) {
+        if (ownerId !== currentUserId) {
             edytujBtn.disabled = true;
             usunBtn.disabled = true;
             return;
@@ -205,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch("edytuj.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&do_godziny=${do_godziny}&rezerwacja=${encodeURIComponent(pelneImie)}`
+                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&do_godziny=${do_godziny}&id_uzytkownika=${encodeURIComponent(currentUserId)}`
             })
             .then(res => res.text())
             .then(msg => {
@@ -225,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch("usun.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&rezerwacja=${encodeURIComponent(pelneImie)}`
+                body: `nr_sali=${nr_sali}&data=${data}&od_godziny=${od_godziny}&id_uzytkownika=${encodeURIComponent(currentUserId)}`
             })
             .then(res => res.text())
             .then(msg => {

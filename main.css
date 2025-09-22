@@ -217,3 +217,15 @@
     box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
     text-align: center;
 }
+.edytuj-btn{
+    background-color: yellow;
+
+}
+.usun-btn{
+    background-color: red;
+
+}
+.zatwierdz-btn{
+    background-color: green;
+
+}
