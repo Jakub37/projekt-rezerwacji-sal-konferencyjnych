@@ -29,7 +29,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
             </div>
             <div id="naglowek-sala"><h1>Rezerwacja Sal</h1></div>
             <div>
-                <a href="konto.php" class="btn-back">Wróć</a>
+                <a href="wyloguj.php" class="btn-back">Wyloguj</a>
             </div>
         </div>
 
@@ -43,6 +43,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                             <tr>
                                 <th>Nr sali</th>
                                 <th>Data</th>
+                                <th>Dzień</th>
                                 <th>Od godziny</th>
                                 <th>Do godziny</th>
                                 <th>Rezerwacja</th>
@@ -61,12 +62,23 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                             $result = $conn->query($sql);
 
                             if ($result && $result->num_rows > 0) {
+                                $lastDate = null;
+                                $dniTygodnia = [1 => 'Poniedziałek', 2 => 'Wtorek', 3 => 'Środa', 4 => 'Czwartek', 5 => 'Piątek', 6 => 'Sobota', 7 => 'Niedziela'];
                                 while ($row = $result->fetch_assoc()) {
                                     $id = htmlspecialchars($row['id']);
                                     $ownerId = htmlspecialchars($row['id_uzytkownika']);
+                                    $dataStr = htmlspecialchars($row['data']);
+                                    $ts = strtotime($row['data']);
+                                    $dzien = $dniTygodnia[(int)date('N', $ts)] ?? '';
+
+                                    if ($lastDate !== null && $lastDate !== $row['data']) {
+                                        echo "<tr class='separator-row'><td colspan='7'></td></tr>";
+                                    }
+
                                     echo "<tr data-id='{$id}' data-owner='{$ownerId}'>
                                         <td>" . htmlspecialchars($row['nr_sali']) . "</td>
-                                        <td>" . htmlspecialchars($row['data']) . "</td>
+                                        <td>" . $dataStr . "</td>
+                                        <td>" . htmlspecialchars($dzien) . "</td>
                                         <td>" . htmlspecialchars($row['od_godziny']) . "</td>
                                         <td>" . htmlspecialchars($row['do_godziny']) . "</td>
                                         <td>" . htmlspecialchars($row['rezerwacja']) . "</td>
@@ -76,9 +88,11 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                                             <button class='usun-btn'>✖</button>
                                         </td>
                                     </tr>";
+
+                                    $lastDate = $row['data'];
                                 }
                             } else {
-                                echo "<tr><td colspan='6'>Brak zarezerwowanych terminów</td></tr>";
+                                echo "<tr><td colspan='7'>Brak zarezerwowanych terminów</td></tr>";
                             }
                             $conn->close();
                             ?>
@@ -181,6 +195,12 @@ document.getElementById("przycisk-podsumowanie").addEventListener("click", () =>
         return;
     }
 
+    // walidacja zakresu czasu: od_godziny < do_godziny (brak równości i cofania)
+    if (od_godziny >= do_godziny) {
+        alert("Nieprawidłowe dane godzin: 'Od' musi być wcześniejsze niż 'Do'.");
+        return;
+    }
+
     fetch("zarezerwuj.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -206,6 +226,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const zatwierdzBtn = row.querySelector(".zatwierdz-btn");
         const usunBtn = row.querySelector(".usun-btn");
 
+        // Pomiń wiersze bez przycisków (np. separatory między dniami)
+        if (!edytujBtn || !zatwierdzBtn || !usunBtn) {
+            return;
+        }
+
         if (ownerId !== currentUserId) {
             edytujBtn.disabled = true;
             usunBtn.disabled = true;
@@ -214,11 +239,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
         edytujBtn.addEventListener("click", () => {
             const cells = row.querySelectorAll("td");
-            for (let i = 0; i < 4; i++) {
+            const editableIndices = [0, 1, 3, 4]; // Nr sali, Data, Od, Do (pomijamy kolumnę Dzień)
+            editableIndices.forEach((cellIndex) => {
                 const input = document.createElement("input");
-                input.value = cells[i].textContent;
-                input.type = (i === 1) ? "date" : (i === 2 || i === 3) ? "time" : "number";
-                if (i === 0) { // nr_sali
+                input.value = cells[cellIndex].textContent;
+                if (cellIndex === 1) input.type = "date";
+                else if (cellIndex === 3 || cellIndex === 4) input.type = "time";
+                else input.type = "number";
+
+                if (cellIndex === 0) {
                     input.min = "1";
                     input.max = "2";
                     input.step = "1";
@@ -229,16 +258,33 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (v > 2) input.value = 2;
                     });
                 }
-                cells[i].innerHTML = "";
-                cells[i].appendChild(input);
-            }
+                cells[cellIndex].innerHTML = "";
+                cells[cellIndex].appendChild(input);
+            });
             edytujBtn.style.display = "none";
             zatwierdzBtn.style.display = "inline-block";
         });
 
         zatwierdzBtn.addEventListener("click", () => {
-            const inputs = row.querySelectorAll("td input");
-            const [nr_sali, data, od_godziny, do_godziny] = Array.from(inputs).map(input => input.value);
+            const cells = row.querySelectorAll("td");
+            const nr_sali = cells[0].querySelector("input")?.value || "";
+            const data = cells[1].querySelector("input")?.value || "";
+            let od_godziny = cells[3].querySelector("input")?.value || "";
+            let do_godziny = cells[4].querySelector("input")?.value || "";
+
+            // Normalizacja czasu do HH:MM
+            const toHHMM = (t) => {
+                if (!t) return t;
+                const parts = String(t).split(":");
+                if (parts.length >= 2) {
+                    const hh = parts[0].padStart(2, "0");
+                    const mm = parts[1].padStart(2, "0");
+                    return `${hh}:${mm}`;
+                }
+                return t;
+            };
+            od_godziny = toHHMM(od_godziny);
+            do_godziny = toHHMM(do_godziny);
 
             if (!nr_sali || !data || !od_godziny || !do_godziny) {
                 alert("Wszystkie pola muszą być wypełnione.");
@@ -248,6 +294,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const nr = parseInt(nr_sali, 10);
             if (![1, 2].includes(nr)) {
                 alert("Dostępne są tylko sale: 1 lub 2.");
+                return;
+            }
+
+            if (od_godziny >= do_godziny) {
+                alert("Nieprawidłowe dane godzin: 'Od' musi być wcześniejsze niż 'Do'.");
                 return;
             }
 

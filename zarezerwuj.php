@@ -21,6 +21,30 @@ if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja || !$id_
     exit;
 }
 
+// Walidacja godzin: akceptuj HH:MM lub HH:MM:SS, zapisuj jako HH:MM, oraz od_godziny < do_godziny
+$normalizeTime = function($t) {
+    if (!$t) return $t;
+    if (!preg_match('/^\\d{2}:\\d{2}(:\\d{2})?$/', $t)) {
+        return false;
+    }
+    $parts = explode(':', $t);
+    $hh = str_pad($parts[0], 2, '0', STR_PAD_LEFT);
+    $mm = str_pad($parts[1], 2, '0', STR_PAD_LEFT);
+    return $hh . ':' . $mm;
+};
+$od_norm = $normalizeTime($od_godziny);
+$do_norm = $normalizeTime($do_godziny);
+if ($od_norm === false || $do_norm === false) {
+    echo "Nieprawidłowy format godzin";
+    exit;
+}
+$od_godziny = $od_norm;
+$do_godziny = $do_norm;
+if ($od_godziny >= $do_godziny) {
+    echo "Nieprawidłowe dane godzin";
+    exit;
+}
+
 // Sprawdzenie kolizji terminów
 $sql = "SELECT * FROM sale
         WHERE nr_sali = ?

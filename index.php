@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (password_verify($haslo, $hash_z_bazy)) {
                 $_SESSION['id_uzytkownika'] = $id_uzytkownika;
                 $_SESSION['ImieNazwisko'] = $imie . ' ' . $nazwisko;
-                header('Location: konto.php');
+                header('Location: main.php');
                 exit;
             } else {
                 $komunikat = "Błędne hasło!";

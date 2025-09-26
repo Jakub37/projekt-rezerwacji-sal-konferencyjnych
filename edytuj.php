@@ -18,13 +18,41 @@ if ($nr_sali !== '' && !in_array((int)$nr_sali, [1, 2], true)) {
     exit;
 }
 
+// Normalizacja godzin: akceptuj HH:MM lub HH:MM:SS i zapisz jako HH:MM
+$normalizeTime = function($t) {
+    if (!$t) return $t;
+    // zgodne z HH:MM lub HH:MM:SS
+    if (!preg_match('/^\\d{2}:\\d{2}(:\\d{2})?$/', $t)) {
+        return false;
+    }
+    $parts = explode(':', $t);
+    $hh = str_pad($parts[0], 2, '0', STR_PAD_LEFT);
+    $mm = str_pad($parts[1], 2, '0', STR_PAD_LEFT);
+    return $hh . ':' . $mm;
+};
+
+$od_norm = $normalizeTime($od_godziny);
+$do_norm = $normalizeTime($do_godziny);
+if ($od_norm === false || $do_norm === false) {
+    echo "Nieprawidłowy format godzin";
+    $conn->close();
+    exit;
+}
+$od_godziny = $od_norm;
+$do_godziny = $do_norm;
+if ($od_godziny >= $do_godziny) {
+    echo "Nieprawidłowe dane godzin";
+    $conn->close();
+    exit;
+}
+
 if ($id && $nr_sali && $data && $od_godziny && $do_godziny && $id_uzytkownika) {
     // Sprawdzenie kolizji z innymi rezerwacjami (wyklucz bieżący rekord)
     $checkSql = "SELECT 1 FROM sale
                  WHERE nr_sali = ?
                    AND data = ?
-                   AND ? < do_godziny
-                   AND ? > od_godziny
+                   AND CAST(? AS TIME) < do_godziny
+                   AND CAST(? AS TIME) > od_godziny
                    AND id <> ?";
     $check = $conn->prepare($checkSql);
     $check->bind_param("isssi", $nr_sali, $data, $od_godziny, $do_godziny, $id);
