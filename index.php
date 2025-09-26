@@ -41,13 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->fetch();
 
             if (password_verify($haslo, $hash_z_bazy)) {
-                // Jeśli hasło jest poprawne to się  ustawia localStorage i przekierowywyuje do main.php
-                echo "<script>
-                    localStorage.setItem('uzytkownikImie', '".htmlspecialchars($imie, ENT_QUOTES)."');
-                    localStorage.setItem('uzytkownikNazwisko', '".htmlspecialchars($nazwisko, ENT_QUOTES)."');
-                    localStorage.setItem('uzytkownikId', '".htmlspecialchars($id_uzytkownika, ENT_QUOTES)."');
-                    window.location.href = 'main.php';
-                </script>";
+                $_SESSION['id_uzytkownika'] = $id_uzytkownika;
+                $_SESSION['ImieNazwisko'] = $imie . ' ' . $nazwisko;
+                header('Location: konto.php');
                 exit;
             } else {
                 $komunikat = "Błędne hasło!";
@@ -76,7 +72,7 @@ $conn->close();
         <h1 id="naglowek">LOGOWANIE</h1>
         <div id="blok_logowania">
             <h2>Wybierz użytkownika</h2>
-            <form method="post" action="logowanie.php">
+            <form method="post" action="index.php">
                 <select name="id_uzytkownika" id="id_uzytkownika" required>
                     <option value="">-- wybierz --</option>
                     <?php foreach ($uzytkownicy as $u): ?>
@@ -96,3 +92,5 @@ $conn->close();
     </div>
 </body>
 </html>
+
+

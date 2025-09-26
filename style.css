@@ -101,3 +101,14 @@
     font-weight: bold;
     margin-top: 10px;
 }
+
+/* rząd przycisków na koncie */
+.buttons-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+.buttons-row form { display: inline-block; }
+.buttons-row #przycisk { width: auto; padding: 12px 20px; }

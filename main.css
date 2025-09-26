@@ -47,6 +47,21 @@
     margin-right: 167px;
 }
 
+/* przycisk Wróć */
+.btn-back {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    font-weight: bold;
+    transition: 0.3s;
+}
+.btn-back:hover {
+    background: linear-gradient(135deg, #2575fc, #6a11cb);
+}
+
 /* Informacja o użytkowniku */
 #uzytkownik {
     display: flex;
@@ -219,13 +234,10 @@
 }
 .edytuj-btn{
     background-color: yellow;
-
 }
 .usun-btn{
     background-color: red;
-
 }
 .zatwierdz-btn{
     background-color: green;
-
 }

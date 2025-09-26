@@ -1,3 +1,12 @@
+<?php
+session_start();
+if (!isset($_SESSION['id_uzytkownika'])) {
+    header('Location: index.php');
+    exit;
+}
+$SESSION_USER_ID = (string)$_SESSION['id_uzytkownika'];
+$SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['ImieNazwisko'] : '';
+?>
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -19,6 +28,9 @@
                 </div>
             </div>
             <div id="naglowek-sala"><h1>Rezerwacja Sal</h1></div>
+            <div>
+                <a href="konto.php" class="btn-back">Wróć</a>
+            </div>
         </div>
 
         <div id="main-content">
@@ -79,7 +91,7 @@
             <div id="prawa-strona">
                 <h2>Rezerwacja</h2>
                 <label>Nr sali</label>
-                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2" />
+                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2" step="1" />
                 <label>Data</label>
                 <input type="date" id="rezerwacja-data" />
                 <label>Od godziny</label>
@@ -104,12 +116,19 @@
 </div>
 
 <script>
-// dane użytkownika
-const imieLS = localStorage.getItem("uzytkownikImie") || "";
-const nazwiskoLS = localStorage.getItem("uzytkownikNazwisko") || "";
-const uzytkownikId = localStorage.getItem("uzytkownikId") || "";
-const pelneImie = imieLS + " " + nazwiskoLS;
+// dane użytkownika z sesji (zawsze aktualne po zalogowaniu)
+const uzytkownikId = "<?php echo htmlspecialchars($SESSION_USER_ID); ?>";
+const pelneImie = "<?php echo htmlspecialchars($SESSION_IMIE_NAZWISKO); ?>";
 document.getElementById("imieNazwisko").innerText = pelneImie;
+
+// ograniczenie numeru sali do zakresu 1-2
+const salaInput = document.getElementById("rezerwacja-nr_sali");
+salaInput.addEventListener("input", () => {
+    const v = parseInt(salaInput.value, 10);
+    if (Number.isNaN(v)) return;
+    if (v < 1) salaInput.value = 1;
+    if (v > 2) salaInput.value = 2;
+});
 
 // modal
 const uzytkownikDiv = document.getElementById("uzytkownik");
@@ -156,6 +175,12 @@ document.getElementById("przycisk-podsumowanie").addEventListener("click", () =>
         return;
     }
 
+    const nr = parseInt(nr_sali, 10);
+    if (![1, 2].includes(nr)) {
+        alert("Dostępne są tylko sale: 1 lub 2.");
+        return;
+    }
+
     fetch("zarezerwuj.php", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -193,6 +218,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 const input = document.createElement("input");
                 input.value = cells[i].textContent;
                 input.type = (i === 1) ? "date" : (i === 2 || i === 3) ? "time" : "number";
+                if (i === 0) { // nr_sali
+                    input.min = "1";
+                    input.max = "2";
+                    input.step = "1";
+                    input.addEventListener("input", () => {
+                        const v = parseInt(input.value, 10);
+                        if (Number.isNaN(v)) return;
+                        if (v < 1) input.value = 1;
+                        if (v > 2) input.value = 2;
+                    });
+                }
                 cells[i].innerHTML = "";
                 cells[i].appendChild(input);
             }
@@ -209,6 +245,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            const nr = parseInt(nr_sali, 10);
+            if (![1, 2].includes(nr)) {
+                alert("Dostępne są tylko sale: 1 lub 2.");
+                return;
+            }
+
             fetch("edytuj.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -217,9 +259,11 @@ document.addEventListener("DOMContentLoaded", () => {
             .then(res => res.text())
             .then(msg => {
                 alert(msg);
-                if (msg === "Rezerwacja zaktualizowana") location.reload();
             })
-            .catch(() => alert("Błąd połączenia z serwerem"));
+            .catch(() => alert("Błąd połączenia z serwerem"))
+            .finally(() => {
+                location.reload();
+            });
         });
 
         usunBtn.addEventListener("click", () => {
