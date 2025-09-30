@@ -82,7 +82,7 @@ if ($id && $nr_sali && $data && $od_godziny && $do_godziny && $id_uzytkownika) {
 
     $stmt->close();
 } else {
-    echo "Brak wymaganych danych – nie można zaktualizować rezerwacji";
+    echo "nie można zaktualizować rezerwacji";
 }
 
 $conn->close();
