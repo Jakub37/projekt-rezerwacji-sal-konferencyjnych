@@ -7,10 +7,9 @@ $nr_sali = $_POST['nr_sali'] ?? '';
 $data = $_POST['data'] ?? '';
 $od_godziny = $_POST['od_godziny'] ?? '';
 $do_godziny = $_POST['do_godziny'] ?? '';
-$rezerwacja = $_POST['rezerwacja'] ?? '';
 $id_uzytkownika = $_POST['id_uzytkownika'] ?? '';
 
-if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$rezerwacja || !$id_uzytkownika) {
+if (!$nr_sali || !$data || !$od_godziny || !$do_godziny || !$id_uzytkownika) {
     echo "Brakuje danych!";
     exit;
 }
@@ -56,10 +55,10 @@ if ($result && $result->num_rows > 0) {
 }
 
 // Wstawienie rezerwacji wraz z id_uzytkownika
-$sql2 = "INSERT INTO sale (nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika)
-         VALUES (?, ?, ?, ?, ?, ?)";
+$sql2 = "INSERT INTO sale (nr_sali, data, od_godziny, do_godziny, id_uzytkownika)
+         VALUES (?, ?, ?, ?, ?)";
 $stmt2 = $conn->prepare($sql2);
-$stmt2->bind_param("sssssi", $nr_sali, $data, $od_godziny, $do_godziny, $rezerwacja, $id_uzytkownika);
+$stmt2->bind_param("ssssi", $nr_sali, $data, $od_godziny, $do_godziny, $id_uzytkownika);
 
 if ($stmt2->execute()) {
     echo "Termin dodany";
