@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/config.php';
 if (!isset($_SESSION['id_uzytkownika'])) {
     header('Location: index.php');
     exit;
@@ -52,8 +53,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                             </thead>
                             <tbody>
                             <?php
-                            $conn = new mysqli("localhost", "root", "", "modernforms_system");
-                            if ($conn->connect_error) die("Błąd połączenia: " . $conn->connect_error);
+                            $conn = db_connect();
 
                             $sql = "SELECT id, nr_sali, data, od_godziny, do_godziny, rezerwacja, id_uzytkownika 
                                     FROM sale 

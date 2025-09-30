@@ -1,8 +1,6 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "modernforms_system");
-if ($conn->connect_error) {
-    die("Błąd połączenia: " . $conn->connect_error);
-}
+require_once __DIR__ . '/config.php';
+$conn = db_connect();
 
 $id             = $_POST['id'] ?? '';
 $nr_sali        = $_POST['nr_sali'] ?? '';

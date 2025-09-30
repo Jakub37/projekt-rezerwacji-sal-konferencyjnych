@@ -1,17 +1,9 @@
 <?php
 session_start();
+require_once __DIR__ . '/config.php';
 $komunikat = "";
 
-
-$host = "localhost";
-$user = "root";
-$password = "";
-$dbname = "modernforms_system";
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Błąd połączenia z bazą danych!");
-}
+$conn = db_connect();
 
 $uzytkownicy = [];
 $sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy";

@@ -1,13 +1,7 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "modernforms_system";
+require_once __DIR__ . '/config.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Błąd połączenia: " . $conn->connect_error);
-}
+$conn = db_connect();
 
 $nr_sali = $_POST['nr_sali'] ?? '';
 $data = $_POST['data'] ?? '';

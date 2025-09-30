@@ -1,10 +1,7 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$dbname = "modernforms_system";
+require_once __DIR__ . '/config.php';
 
-$conn = new mysqli($host, $user, $password, $dbname);
+$conn = db_connect();
 if ($conn->connect_error) {
     die(json_encode(["success" => false, "error" => "Błąd połączenia z bazą."]));
 }

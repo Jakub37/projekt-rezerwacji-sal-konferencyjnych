@@ -3,11 +3,8 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 header('Content-Type: text/plain; charset=utf-8');
 
-$conn = new mysqli("localhost", "root", "", "modernforms_system");
-if ($conn->connect_error) {
-    http_response_code(500);
-    die("Błąd połączenia: " . $conn->connect_error);
-}
+require_once __DIR__ . '/config.php';
+$conn = db_connect();
 
 $id = $_POST['id'] ?? '';
 $id_uzytkownika = $_POST['id_uzytkownika'] ?? '';
