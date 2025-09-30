@@ -85,9 +85,9 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                                         <td>" . htmlspecialchars($row['do_godziny']) . "</td>
                                         <td>" . htmlspecialchars($row['rezerwacja']) . "</td>
                                         <td>
-                                            <button class='edytuj-btn'>✏</button>
-                                            <button class='zatwierdz-btn' style='display:none;'>✔</button>
-                                            <button class='usun-btn'>✖</button>
+                                            <button class='edytuj-btn'>Edytuj</button>
+                                            <button class='zatwierdz-btn' style='display:none;'>Zapisz</button>
+                                            <button class='usun-btn'>usuń</button>
                                         </td>
                                     </tr>";
 

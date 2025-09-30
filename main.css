@@ -250,10 +250,13 @@
 }
 .edytuj-btn{
     background-color: yellow;
+    font-size: 14px;
 }
 .usun-btn{
     background-color: red;
+    font-size: 14px;
 }
 .zatwierdz-btn{
     background-color: green;
+    font-size: 14px;
 }

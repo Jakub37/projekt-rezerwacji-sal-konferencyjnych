@@ -79,7 +79,7 @@ if ($od_godziny >= $do_godziny) {
     exit;
 }
 
-if ($id && $nr_sali && $data && $od_godziny && $do_godziny && $id_uzytkownika) {
+if ($id && $nr_sali && $data && $od_godziny && $do_godziny && $id_uzytkownika) {    
     // Sprawdzenie kolizji z innymi rezerwacjami (wyklucz bieżący rekord)
     $checkSql = "SELECT 1 FROM sale
                  WHERE nr_sali = ?
