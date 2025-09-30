@@ -6,7 +6,7 @@ $komunikat = "";
 $conn = db_connect();
 
 $uzytkownicy = [];
-$sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy";
+$sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy ORDER BY Imie ASC, Nazwisko ASC";
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
