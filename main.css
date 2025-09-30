@@ -199,6 +199,15 @@
     width: 100%;
 }
 
+#prawa-strona select {
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    background-color: #fff;
+}
+
 #prawa-strona button {
     padding: 10px;
     font-size: 16px;

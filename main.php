@@ -41,7 +41,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                         <table id="tabela-rezerwacji">
                             <thead>
                             <tr>
-                                <th>Nr sali</th>
+                                <th>Sala</th>
                                 <th>Data</th>
                                 <th>Dzień</th>
                                 <th>Od godziny</th>
@@ -68,6 +68,8 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                                     $id = htmlspecialchars($row['id']);
                                     $ownerId = htmlspecialchars($row['id_uzytkownika']);
                                     $dataStr = htmlspecialchars($row['data']);
+                                    $nrSalaVal = (int)$row['nr_sali'];
+                                    $salaNazwa = $nrSalaVal === 1 ? 'Administracyjna' : ($nrSalaVal === 2 ? 'Handlowy' : ('Sala ' . htmlspecialchars($row['nr_sali'])));
                                     $ts = strtotime($row['data']);
                                     $dzien = $dniTygodnia[(int)date('N', $ts)] ?? '';
 
@@ -75,8 +77,8 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
                                         echo "<tr class='separator-row'><td colspan='7'></td></tr>";
                                     }
 
-                                    echo "<tr data-id='{$id}' data-owner='{$ownerId}'>
-                                        <td>" . htmlspecialchars($row['nr_sali']) . "</td>
+                                    echo "<tr data-id='{$id}' data-owner='{$ownerId}' data-room='{$nrSalaVal}'>
+                                        <td>" . htmlspecialchars($salaNazwa) . "</td>
                                         <td>" . $dataStr . "</td>
                                         <td>" . htmlspecialchars($dzien) . "</td>
                                         <td>" . htmlspecialchars($row['od_godziny']) . "</td>
@@ -104,8 +106,11 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string)$_SESSION['I
 
             <div id="prawa-strona">
                 <h2>Rezerwacja</h2>
-                <label>Nr sali</label>
-                <input type="number" id="rezerwacja-nr_sali" placeholder="Nr sali" min="1" max="2" step="1" />
+                <label>Sala</label>
+                <select id="rezerwacja-nr_sali">
+                    <option value="1">Administracyjna</option>
+                    <option value="2">Handlowy</option>
+                </select>
                 <label>Data</label>
                 <input type="date" id="rezerwacja-data" />
                 <label>Od godziny</label>
@@ -135,14 +140,8 @@ const uzytkownikId = "<?php echo htmlspecialchars($SESSION_USER_ID); ?>";
 const pelneImie = "<?php echo htmlspecialchars($SESSION_IMIE_NAZWISKO); ?>";
 document.getElementById("imieNazwisko").innerText = pelneImie;
 
-// ograniczenie numeru sali do zakresu 1-2
+// lista wyboru sali (1=Administracyjna, 2=Handlowy)
 const salaInput = document.getElementById("rezerwacja-nr_sali");
-salaInput.addEventListener("input", () => {
-    const v = parseInt(salaInput.value, 10);
-    if (Number.isNaN(v)) return;
-    if (v < 1) salaInput.value = 1;
-    if (v > 2) salaInput.value = 2;
-});
 
 // modal
 const uzytkownikDiv = document.getElementById("uzytkownik");
@@ -239,35 +238,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
         edytujBtn.addEventListener("click", () => {
             const cells = row.querySelectorAll("td");
-            const editableIndices = [0, 1, 3, 4]; // Nr sali, Data, Od, Do (pomijamy kolumnę Dzień)
-            editableIndices.forEach((cellIndex) => {
-                const input = document.createElement("input");
-                input.value = cells[cellIndex].textContent;
-                if (cellIndex === 1) input.type = "date";
-                else if (cellIndex === 3 || cellIndex === 4) input.type = "time";
-                else input.type = "number";
+            // 0: Sala (select), 1: Data, 2: Dzień (pomijamy), 3: Od, 4: Do
+            const select = document.createElement("select");
+            select.innerHTML = "<option value=\"1\">Administracyjna</option><option value=\"2\">Handlowy</option>";
+            select.value = row.dataset.room || "1";
+            cells[0].innerHTML = "";
+            cells[0].appendChild(select);
 
-                if (cellIndex === 0) {
-                    input.min = "1";
-                    input.max = "2";
-                    input.step = "1";
-                    input.addEventListener("input", () => {
-                        const v = parseInt(input.value, 10);
-                        if (Number.isNaN(v)) return;
-                        if (v < 1) input.value = 1;
-                        if (v > 2) input.value = 2;
-                    });
-                }
-                cells[cellIndex].innerHTML = "";
-                cells[cellIndex].appendChild(input);
-            });
+            const inputData = document.createElement("input");
+            inputData.type = "date";
+            inputData.value = cells[1].textContent;
+            cells[1].innerHTML = "";
+            cells[1].appendChild(inputData);
+
+            const inputOd = document.createElement("input");
+            inputOd.type = "time";
+            inputOd.value = cells[3].textContent;
+            cells[3].innerHTML = "";
+            cells[3].appendChild(inputOd);
+
+            const inputDo = document.createElement("input");
+            inputDo.type = "time";
+            inputDo.value = cells[4].textContent;
+            cells[4].innerHTML = "";
+            cells[4].appendChild(inputDo);
+
             edytujBtn.style.display = "none";
             zatwierdzBtn.style.display = "inline-block";
         });
 
         zatwierdzBtn.addEventListener("click", () => {
             const cells = row.querySelectorAll("td");
-            const nr_sali = cells[0].querySelector("input")?.value || "";
+            const nr_sali = (cells[0].querySelector("select")?.value || cells[0].querySelector("input")?.value || "");
             const data = cells[1].querySelector("input")?.value || "";
             let od_godziny = cells[3].querySelector("input")?.value || "";
             let do_godziny = cells[4].querySelector("input")?.value || "";
