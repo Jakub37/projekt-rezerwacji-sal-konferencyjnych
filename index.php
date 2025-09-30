@@ -6,7 +6,7 @@ $komunikat = "";
 $conn = db_connect();
 
 $uzytkownicy = [];
-$sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy where aktywny = 1  ORDER BY Imie ASC, Nazwisko ASC";
+$sql = "SELECT id_uzytkownika, Imie, Nazwisko FROM uzytkownicy where aktywny = 1  ORDER BY Nazwisko ASC, Imie ASC";
 $result = $conn->query($sql);
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -53,12 +53,14 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logowanie</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="glowny">
         <h1 id="naglowek">LOGOWANIE</h1>
@@ -69,10 +71,11 @@ $conn->close();
                     <option value="">-- wybierz --</option>
                     <?php foreach ($uzytkownicy as $u): ?>
                         <option value="<?php echo $u['id_uzytkownika']; ?>">
-                            <?php echo htmlspecialchars($u['Imie'] . " " . $u['Nazwisko']); ?>
+                            <?php echo htmlspecialchars($u['Nazwisko'] . " " . $u['Imie']); ?>
                         </option>
                     <?php endforeach; ?>
-                </select><br>
+                </select>
+                <br>
                 <input type="password" name="haslo" placeholder="Hasło..." id="haslo" required><br>
                 <button type="submit" id="przycisk">Zaloguj</button>
             </form>
@@ -83,6 +86,5 @@ $conn->close();
         </div>
     </div>
 </body>
+
 </html>
-
-
