@@ -9,9 +9,44 @@ $od_godziny     = $_POST['od_godziny'] ?? '';
 $do_godziny     = $_POST['do_godziny'] ?? '';
 $id_uzytkownika = $_POST['id_uzytkownika'] ?? '';
 
+// Minimalne wymagania: id i id_uzytkownika
+if ($id === '' || $id_uzytkownika === '') {
+    echo "Brak wymaganych danych – nie można zaktualizować rezerwacji";
+    $conn->close();
+    exit;
+}
+
+// Pobierz bieżący rekord, by umożliwić częściową edycję
+$currSql = "SELECT nr_sali, data, od_godziny, do_godziny, id_uzytkownika FROM sale WHERE id=?";
+$curr = $conn->prepare($currSql);
+$curr->bind_param("i", $id);
+$curr->execute();
+$currRes = $curr->get_result();
+if (!$currRes || $currRes->num_rows === 0) {
+    echo "Rezerwacja nie istnieje";
+    $curr->close();
+    $conn->close();
+    exit;
+}
+$currRow = $currRes->fetch_assoc();
+$curr->close();
+
+// Weryfikacja właściciela
+if ((int)$currRow['id_uzytkownika'] !== (int)$id_uzytkownika) {
+    echo "Brak uprawnień";
+    $conn->close();
+    exit;
+}
+
+// Uzupełnij brakujące pola wartościami bieżącymi (częściowa edycja)
+if ($nr_sali === '')      $nr_sali = $currRow['nr_sali'];
+if ($data === '')         $data = $currRow['data'];
+if ($od_godziny === '')   $od_godziny = $currRow['od_godziny'];
+if ($do_godziny === '')   $do_godziny = $currRow['do_godziny'];
+
 // Walidacja nr_sali: tylko 1 lub 2
-if ($nr_sali !== '' && !in_array((int)$nr_sali, [1, 2], true)) {
-    echo "Nieprawidłowy numer sali (dozwolone: 1 lub 2)";
+if (!in_array((int)$nr_sali, [1, 2], true)) {
+    echo "Nieprawidłowy numer sali (dozwolone: administracyjna lub handlowy)";
     $conn->close();
     exit;
 }

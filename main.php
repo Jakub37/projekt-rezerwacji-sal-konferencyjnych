@@ -288,6 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
             od_godziny = toHHMM(od_godziny);
             do_godziny = toHHMM(do_godziny);
 
+            // Możliwa częściowa edycja: wymagamy tylko istnienia wartości po uzupełnieniu z inputów
             if (!nr_sali || !data || !od_godziny || !do_godziny) {
                 alert("Wszystkie pola muszą być wypełnione.");
                 return;
