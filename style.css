@@ -2,14 +2,17 @@
     margin: 0px;
     padding: 0px;
 }
+
 #glowny {
     background: linear-gradient(180deg, #970cc1, #2575fc);
-    height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;   /* wyśrodkowanie bloku logowania */
+    justify-content: center;
+    /* wyśrodkowanie bloku logowania */
     align-items: center;
     font-family: Arial, sans-serif;
+    padding-top: 150px;
 }
 
 /* blok logowania */
@@ -19,7 +22,7 @@
     border-radius: 15px;
     width: 350px;
     text-align: center;
-    box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 /* nagłówek */
@@ -42,7 +45,7 @@
 
 #blok_logowania input:focus {
     border-color: #2575fc;
-    box-shadow: 0 0 5px rgba(37,117,252,0.5);
+    box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
 }
 
 /* przycisk */
@@ -70,9 +73,9 @@
     font-size: 70px;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 40px;  
+    margin-bottom: 40px;
     position: relative;
-    top: -30px;            
+    top: -30px;
 }
 
 /* styl dla listy rozwijanej (select) */
@@ -94,8 +97,9 @@
 
 #blok_logowania select:focus {
     border-color: #2575fc;
-    box-shadow: 0 0 5px rgba(37,117,252,0.5);
+    box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
 }
+
 #komunikat {
     color: red;
     font-weight: bold;
@@ -110,5 +114,62 @@
     align-items: center;
     margin-top: 10px;
 }
-.buttons-row form { display: inline-block; }
-.buttons-row #przycisk { width: auto; padding: 12px 20px; }
+
+.buttons-row form {
+    display: inline-block;
+}
+
+.buttons-row #przycisk {
+    width: auto;
+    padding: 12px 20px;
+}
+
+
+#podglad-rezerwacji {
+    margin-top: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 800px;
+    font-family: Arial, sans-serif;
+}
+
+#podglad-rezerwacji h2 {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 20px;
+    text-align: center;
+}
+
+#podglad-rezerwacji table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+#podglad-rezerwacji th,
+#podglad-rezerwacji td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+#podglad-rezerwacji thead {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+#podglad-rezerwacji tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+.separator-row td {
+    border-top: 5px solid #333;
+    padding: 0;
+    height: 0;
+}
