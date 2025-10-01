@@ -13,4 +13,7 @@ function db_connect() {
 	$conn->set_charset('utf8mb4'); 
 	return $conn;
 }
+
+// Ustawienia SMTP do wysyłki e‑mail (wypełnij danymi dostawcy lub sandboxu)
+// (Usunięto stare wysyłanie maili/SMTP – skrypt przypomnień jest w send_reminders.php i używa mail())
 ?>

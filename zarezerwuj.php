@@ -38,6 +38,14 @@ if ($od_godziny >= $do_godziny) {
     exit;
 }
 
+// Blokada terminów w przeszłości względem serwera
+date_default_timezone_set('Europe/Warsaw');
+$startTs = strtotime($data . ' ' . $od_godziny . ':00');
+if ($startTs === false || $startTs < time()) {
+    echo "Nie można rezerwować terminu w przeszłości";
+    exit;
+}
+
 // Sprawdzenie kolizji terminów
 $sql = "SELECT * FROM sale
         WHERE nr_sali = ?

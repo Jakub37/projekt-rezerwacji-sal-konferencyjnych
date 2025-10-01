@@ -5,14 +5,14 @@
 
 #glowny {
     background: linear-gradient(180deg, #970cc1, #2575fc);
-    height: auto;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     /* wyśrodkowanie bloku logowania */
     align-items: center;
     font-family: Arial, sans-serif;
-    padding-top: 150px;
+    padding: 150px 20px 20px 20px;
 }
 
 /* blok logowania */

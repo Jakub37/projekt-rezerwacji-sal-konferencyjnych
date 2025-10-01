@@ -94,6 +94,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
             <td>
                 <button class='edytuj-btn'>Edytuj</button>
                 <button class='zatwierdz-btn' style='display:none;'>Zapisz</button>
+                <button class='anuluj-btn' style='display:none;'>Anuluj</button>
                 <button class='usun-btn'>usuń</button>
             </td>
         </tr>";
@@ -207,6 +208,14 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
                 return;
             }
 
+            // blokada terminów w przeszłości względem bieżącej chwili
+            const now = new Date();
+            const startTs = new Date(`${data}T${od_godziny}:00`);
+            if (isFinite(startTs.getTime()) && startTs < now) {
+                alert("Nie można rezerwować terminu w przeszłości.");
+                return;
+            }
+
             fetch("zarezerwuj.php", {
                 method: "POST",
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -230,6 +239,7 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
 
                 const edytujBtn = row.querySelector(".edytuj-btn");
                 const zatwierdzBtn = row.querySelector(".zatwierdz-btn");
+                const anulujBtn = row.querySelector(".anuluj-btn");
                 const usunBtn = row.querySelector(".usun-btn");
 
                 // Pomiń wiersze bez przycisków (np. separatory między dniami)
@@ -272,6 +282,10 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
 
                     edytujBtn.style.display = "none";
                     zatwierdzBtn.style.display = "inline-block";
+                    usunBtn.style.display = "inline-block";
+                    if (anulujBtn) {
+                        anulujBtn.style.display = "inline-block";
+                    }
                 });
 
                 zatwierdzBtn.addEventListener("click", () => {
@@ -312,6 +326,14 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
                         return;
                     }
 
+                    // blokada terminów w przeszłości
+                    const now = new Date();
+                    const startTs = new Date(`${data}T${od_godziny}:00`);
+                    if (isFinite(startTs.getTime()) && startTs < now) {
+                        alert("Nie można ustawić terminu w przeszłości.");
+                        return;
+                    }
+
                     fetch("edytuj.php", {
                         method: "POST",
                         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -326,6 +348,13 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
                             location.reload();
                         });
                 });
+
+                // Anuluj przywraca oryginalny wiersz (reload najprościej)
+                if (anulujBtn) {
+                    anulujBtn.addEventListener("click", () => {
+                        location.reload();
+                    });
+                }
 
                 usunBtn.addEventListener("click", () => {
                     if (!confirm("Czy na pewno chcesz usunąć tę rezerwację?")) return;
