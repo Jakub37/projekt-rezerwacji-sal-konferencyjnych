@@ -21,7 +21,7 @@ $LAST_MAIL_ERROR = '';
  */
 function send_email(string $to, string $subject, string $body): bool
 {
-	$smtpHost = 'poczta.interia.pl';
+	$smtpHost = 'smtp.interia.pl';
 	$smtpPort = 587;               // 587 (TLS) lub 465 (SSL)
 	$smtpUser = 'ahaxdok@interia.pl';
 	$smtpPass = 'XDXDXD!@#abc';

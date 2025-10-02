@@ -373,6 +373,11 @@ $SESSION_IMIE_NAZWISKO = isset($_SESSION['ImieNazwisko']) ? (string) $_SESSION['
                 });
             });
         });
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('usun_stare.php').catch(() => {
+            
+            });
+        });
     </script>
 </body>
 

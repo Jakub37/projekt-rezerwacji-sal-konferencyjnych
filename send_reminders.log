@@ -1,0 +1,11 @@
+
+[INFO] Brak terminów w oknie 29–30 min. Serwer: 2025-10-02 08:00:36
+PHP Fatal error:  Uncaught Error: Call to undefined function saveCache() in C:\xampp\htdocs\praktykant\projekt1\projekt-rezerwacji-sal-konferencyjnych\send_reminders.php:55
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\praktykant\projekt1\projekt-rezerwacji-sal-konferencyjnych\send_reminders.php on line 55
+
+Fatal error: Uncaught Error: Call to undefined function saveCache() in C:\xampp\htdocs\praktykant\projekt1\projekt-rezerwacji-sal-konferencyjnych\send_reminders.php:55
+Stack trace:
+#0 {main}
+  thrown in C:\xampp\htdocs\praktykant\projekt1\projekt-rezerwacji-sal-konferencyjnych\send_reminders.php on line 55
